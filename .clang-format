@@ -1,0 +1,38 @@
+---
+BasedOnStyle: Microsoft
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveMacros: 'true'
+AlignConsecutiveAssignments: 'true'
+AlignEscapedNewlines: Left
+AlignTrailingComments: 'true'
+AllowAllConstructorInitializersOnNextLine: 'true'
+AllowShortBlocksOnASingleLine: 'true'
+AllowShortCaseLabelsOnASingleLine: 'true'
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: 'true'
+AlwaysBreakTemplateDeclarations: 'Yes'
+SortIncludes: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+      SplitEmptyFunction: false
+      SplitEmptyRecord: false
+IncludeBlocks: Regroup
+IncludeCategories:
+      # Sort primary headers 
+    - Regex:           '<(TkCore.h)>'
+      Priority:        1
+      # External headers in <> with extension or /
+    - Regex: '<[-\w\/-_]+[\.\/][-\w\/-_]+>'
+      Priority: 2
+      # Metadata headers
+    - Regex: '<[-\w\/-_]+[\.meta\/][-\w\/-_]+>'
+      Priority: 3
+      # STL headers
+    - Regex: '<[-\w\/-_]+>'
+      Priority: 4
+      # Local headers in ""
+    - Regex: '"[-\w\/-_]*"'
+      Priority: 5
+
+...
