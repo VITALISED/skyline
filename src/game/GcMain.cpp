@@ -2,24 +2,33 @@
 
 int cGcMain::Main()
 {
-    gApplication = new cGcApplication();
+    cGcApplication &gApplication = cGcApplication::GetInstance();
+    cTkSystem &gSystem           = cTkSystem::GetInstance();
 
     TK_INFO("Starting game");
 
-    while (!gApplication->mbQuit)
+    while (!gApplication.mbQuit)
     {
-        gApplication->mpClock->Update();
-        while (gApplication->mpClock->IsAccumulatorGreaterThanDT())
+        gSystem.PollForEvents();
+        gApplication.mpClock->Update();
+        while (gApplication.mpClock->IsAccumulatorGreaterThanDT())
         {
-            gApplication->Update();
-            TK_INFO("Update call");
-            gApplication->mpClock->SyncAccumulatorUpdate();
+            gApplication.Update();
+            gApplication.mpClock->SyncAccumulatorUpdate();
         }
     }
 
-    delete gApplication;
+    cGcMain::Destruct();
 
     return eProcessExit_Success;
+}
+
+void cGcMain::Destruct()
+{
+    TK_INFO("Cleaning up..");
+
+    cGcApplication::GetInstance().Destruct();
+    cTkSystem::GetInstance().Destruct();
 }
 
 #ifdef D_MSVC

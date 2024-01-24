@@ -1,9 +1,12 @@
-set(TKTOOLKIT_SOURCES graphics/vulkan/TkVulkan.cpp system/timer/TkClock.cpp)
+set(TKTOOLKIT_SOURCES graphics/vulkan/TkVulkan.cpp system/timer/TkClock.cpp
+                      system/TkSystem.cpp
+)
 
 set(TKTOOLKIT_HEADERS
     core/TkAssert.h
     core/TkCore.h
     core/TkMacros.h
+    core/TkSingleton.h
     core/TkSTD.h
     graphics/vulkan/TkVulkan.h
     maths/numeric/TkIntrinsics.h
@@ -12,6 +15,7 @@ set(TKTOOLKIT_HEADERS
     maths/numeric/TkVector4.h
     maths/numeric/TkMatrix34.h
     system/timer/TkClock.h
+    system/TkSystem.h
 )
 
 add_library(TkToolkit ${TKTOOLKIT_SOURCES} ${TKTOOLKIT_HEADERS})
@@ -21,7 +25,7 @@ target_include_directories(TkToolkit PRIVATE ${SKYLINE_SRC_DIR})
 target_precompile_headers(TkToolkit PUBLIC TkPch.h)
 
 target_link_libraries(
-    TkToolkit PUBLIC Vulkan::Vulkan SkylineSubmoduleDependencies spdlog
+    TkToolkit PUBLIC Vulkan::Vulkan SkylineSubmoduleDependencies spdlog glfw
 )
 
 if(MSVC)

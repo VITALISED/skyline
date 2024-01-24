@@ -1,17 +1,13 @@
 #pragma once
 
-class cGcApplication;
+#include <toolkit/core/TkCore.h>
 
-extern cGcApplication *gApplication;
-
-class cGcApplication
+class cGcApplication : public cTkSingleton<cGcApplication>
 {
   public:
-    inline cGcApplication() { Construct(); }
     void Construct();
-    void Prepare();
-    void Update();
     void Destruct();
+    void Update();
 
     bool mbQuit;
     cTkClock *mpClock;

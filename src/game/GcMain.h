@@ -12,4 +12,5 @@ class cGcMain
 {
   public:
     static int Main();
+    static void Destruct();
 };

@@ -23,6 +23,10 @@ add_submodule(
     ./submodules/spdlog/include
 )
 
+add_submodule(
+    SkylineSubmoduleDependencies ./submodules/glfw ./submodules/glfw/include
+)
+
 set(SKYLINE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_subdirectory(src/toolkit)

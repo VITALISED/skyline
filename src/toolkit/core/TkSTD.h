@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fstream>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -36,5 +37,6 @@ template <typename T>
 using Vector     = std::vector<T, TkSTLAllocator<T>>;
 using OStream    = std::ostream;
 namespace Chrono = std::chrono;
-
+template <typename T>
+using Function = std::function<T>;
 } // namespace TkSTD
