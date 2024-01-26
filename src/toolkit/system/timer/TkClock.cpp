@@ -12,6 +12,7 @@ void cTkClock::Update()
 {
     long double lNewTime   = this->Now();
     long double lFrameTime = lNewTime - this->mfCurrentTime;
-    this->mfCurrentTime    = lNewTime;
+
+    this->mfCurrentTime = lNewTime;
     this->mfAccumulator += lFrameTime;
 }

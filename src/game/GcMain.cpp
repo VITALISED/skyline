@@ -2,10 +2,23 @@
 
 int cGcMain::Main()
 {
-    cGcApplication &gApplication = cGcApplication::GetInstance();
-    cTkSystem &gSystem           = cTkSystem::GetInstance();
+    TK_INFO("Starting Game Process!");
 
-    TK_INFO("Starting game");
+    TkSTD::String lsApplicationName = "GcGame";
+    TkSTD::String lsEngineName      = "skyline";
+
+    cTkSystem &gSystem           = cTkSystem::GetInstance();
+    cEgEngine &gEngine           = cEgEngine::GetInstance();
+    cGcApplication &gApplication = cGcApplication::GetInstance();
+
+    cTkEngineSettings lSettings = cTkEngineSettings(
+        lsApplicationName, VK_MAKE_API_VERSION(0, 1, 0, 0), lsEngineName, VK_MAKE_API_VERSION(0, 1, 0, 0));
+    gSystem.Construct();
+    gEngine.Configure(lSettings);
+    gApplication.Construct();
+
+    TK_INFO("Created Application Components");
+    std::printf("hello");
 
     while (!gApplication.mbQuit)
     {
@@ -18,6 +31,8 @@ int cGcMain::Main()
         }
     }
 
+    TK_INFO("Exited Application Loop");
+
     cGcMain::Destruct();
 
     return eProcessExit_Success;
@@ -25,8 +40,9 @@ int cGcMain::Main()
 
 void cGcMain::Destruct()
 {
-    TK_INFO("Cleaning up..");
+    TK_INFO("Cleaning up");
 
+    cEgEngine::GetInstance().Destruct();
     cGcApplication::GetInstance().Destruct();
     cTkSystem::GetInstance().Destruct();
 }
@@ -35,7 +51,15 @@ void cGcMain::Destruct()
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    return cGcMain::Main();
+    AllocConsole();
+    SetConsoleTitle("GcGame");
+    freopen("CONOUT$", "wt", stdout);
+
+    int liResult = cGcMain::Main();
+
+    FreeConsole();
+
+    return liResult;
 }
 
 #endif

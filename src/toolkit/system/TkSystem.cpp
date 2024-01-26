@@ -11,7 +11,8 @@ void cTkSystem::Construct()
 
 void cTkSystem::Destruct()
 {
-    delete this->mpGLFWWindow;
+    glfwDestroyWindow(this->mpGLFWWindow);
+    glfwTerminate();
     delete this;
 }
 
@@ -20,7 +21,7 @@ void cTkSystem::ConstructVideo()
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    this->mpGLFWWindow = glfwCreateWindow(this->muiWidth, this->muiHeight, "Vulkan window", nullptr, nullptr);
+    this->mpGLFWWindow = glfwCreateWindow(this->muiWidth, this->muiHeight, "GcGame", nullptr, nullptr);
 }
 
 void cTkSystem::PollForEvents()

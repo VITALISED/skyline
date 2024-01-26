@@ -27,6 +27,11 @@ add_submodule(
     SkylineSubmoduleDependencies ./submodules/glfw ./submodules/glfw/include
 )
 
+add_submodule(
+    SkylineSubmoduleDependencies ./submodules/vk-bootstrap
+    ./submodules/vk-bootstrap/src
+)
+
 set(SKYLINE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_subdirectory(src/toolkit)

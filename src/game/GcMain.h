@@ -1,5 +1,6 @@
 #pragma once
 
+#include <engine/EgMain.h>
 #include <game/application/GcApplication.h>
 
 enum eProcessExit

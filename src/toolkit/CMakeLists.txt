@@ -1,5 +1,6 @@
-set(TKTOOLKIT_SOURCES graphics/vulkan/TkVulkan.cpp system/timer/TkClock.cpp
-                      system/TkSystem.cpp
+set(TKTOOLKIT_SOURCES
+    core/TkAssert.cpp graphics/vulkan/TkVulkan.cpp
+    graphics/api/TkGraphicsAPI.cpp system/timer/TkClock.cpp system/TkSystem.cpp
 )
 
 set(TKTOOLKIT_HEADERS
@@ -8,7 +9,10 @@ set(TKTOOLKIT_HEADERS
     core/TkMacros.h
     core/TkSingleton.h
     core/TkSTD.h
+    core/TkString.h
+    engine/TkEngineSettings.h
     graphics/vulkan/TkVulkan.h
+    graphics/api/TkGraphicsAPI.h
     maths/numeric/TkIntrinsics.h
     maths/numeric/TkVector2.h
     maths/numeric/TkVector3.h
@@ -26,6 +30,7 @@ target_precompile_headers(TkToolkit PUBLIC TkPch.h)
 
 target_link_libraries(
     TkToolkit PUBLIC Vulkan::Vulkan SkylineSubmoduleDependencies spdlog glfw
+                     vk-bootstrap
 )
 
 if(MSVC)

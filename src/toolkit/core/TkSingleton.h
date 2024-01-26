@@ -15,7 +15,7 @@ class cTkSingleton
 
         if (gInstance.mbInitialised == false)
         {
-            gInstance.Construct();
+            gInstance               = T();
             gInstance.mbInitialised = true;
         }
 
