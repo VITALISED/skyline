@@ -10,6 +10,7 @@ class cEgEngine : public cTkSingleton<cEgEngine>
     void Construct();
     void Destruct();
     void Configure(cTkEngineSettings &lSettings);
+    void Render();
 
     cEgRenderer *mpRenderer;
     cTkEngineSettings *mpSettings;

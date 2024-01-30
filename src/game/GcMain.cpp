@@ -18,7 +18,6 @@ int cGcMain::Main()
     gApplication.Construct();
 
     TK_INFO("Created Application Components");
-    std::printf("hello");
 
     while (!gApplication.mbQuit)
     {
@@ -29,6 +28,8 @@ int cGcMain::Main()
             gApplication.Update();
             gApplication.mpClock->SyncAccumulatorUpdate();
         }
+
+        gEngine.Render();
     }
 
     TK_INFO("Exited Application Loop");

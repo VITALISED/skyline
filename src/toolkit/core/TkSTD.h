@@ -19,7 +19,11 @@ class TkSTLAllocator : public std::allocator<T>
     TkSTLAllocator(const TkSTLAllocator<U> &other) noexcept : std::allocator<T>(other)
     {}
 
-    constexpr TkSTLAllocator<T> &operator=(const TkSTLAllocator<T> &other) { std::allocator<T>::operator=(other); }
+    constexpr TkSTLAllocator<T> &operator=(const TkSTLAllocator<T> &other)
+    {
+        std::allocator<T>::operator=(other);
+        return *this;
+    }
 
     template <typename U>
     struct rebind
@@ -42,4 +46,7 @@ namespace Chrono     = std::chrono;
 inline auto ToString = [](auto &&lArg) { return std::to_string(std::forward<decltype(lArg)>(lArg)); };
 template <typename T>
 using Function = std::function<T>;
+
+template <typename T>
+using Vector = std::vector<T, TkSTLAllocator<T>>;
 } // namespace TkSTD

@@ -29,8 +29,8 @@ target_include_directories(TkToolkit PRIVATE ${SKYLINE_SRC_DIR})
 target_precompile_headers(TkToolkit PUBLIC TkPch.h)
 
 target_link_libraries(
-    TkToolkit PUBLIC Vulkan::Vulkan SkylineSubmoduleDependencies spdlog glfw
-                     vk-bootstrap
+    TkToolkit PUBLIC SkylineSubmoduleDependencies spdlog glfw vk-bootstrap
+                     Vulkan::Vulkan ${Vulkan_LIBRARIES}
 )
 
 if(MSVC)
