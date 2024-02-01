@@ -20,13 +20,9 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
 
     this->mVkInstance     = lInstance.instance;
     this->mDebugMessenger = lInstance.debug_messenger;
-
-    if (glfwCreateWindowSurface(this->mVkInstance, gSystem.mpGLFWWindow, nullptr, &this->mSurfaceKHR) != VK_SUCCESS)
-    {
-        TK_ERROR("Couldn't make window surface!\n"
-                 "(glfwCreateWindowSurface(this->mVkInstance, gSystem.mpGLFWWindow, nullptr, &this->mSurfaceKHR) != "
-                 "VK_SUCCESS)");
-    }
+    TK_ASSERT(
+        glfwCreateWindowSurface(this->mVkInstance, gSystem.mpGLFWWindow, nullptr, &this->mSurfaceKHR) == VK_SUCCESS,
+        "Couldn't make window surface!");
 
     const std::vector<const char *> lDeviceExts = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME};

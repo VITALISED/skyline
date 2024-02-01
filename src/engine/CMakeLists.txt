@@ -1,4 +1,4 @@
-set(EGENGINE_HEADERS EgMain.h renderer/EgRenderer.h)
+set(EGENGINE_HEADERS EgMain.h renderer/EgRenderer.h renderer/EgQueue.h)
 
 set(EGENGINE_SOURCES EgMain.cpp renderer/EgRenderer.cpp)
 

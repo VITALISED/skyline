@@ -12,6 +12,7 @@ enum eProcessExit
 class cGcMain
 {
   public:
-    static int Main();
+    static void Construct();
     static void Destruct();
+    static int Main();
 };

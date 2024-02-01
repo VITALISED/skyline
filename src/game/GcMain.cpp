@@ -1,9 +1,7 @@
 #include <game/GcMain.h>
 
-int cGcMain::Main()
+void cGcMain::Construct()
 {
-    TK_INFO("Starting Game Process!");
-
     TkSTD::String lsApplicationName = "GcGame";
     TkSTD::String lsEngineName      = "skyline";
 
@@ -17,7 +15,20 @@ int cGcMain::Main()
     gEngine.Configure(lSettings);
     gApplication.Construct();
 
-    TK_INFO("Created Application Components");
+    TK_INFO("Constructed Application Components");
+}
+
+int cGcMain::Main()
+{
+    TK_INFO("Starting Game Process!");
+
+    TK_ASSERT(1 == 1, "Assert test!!!");
+
+    cTkSystem &gSystem           = cTkSystem::GetInstance();
+    cEgEngine &gEngine           = cEgEngine::GetInstance();
+    cGcApplication &gApplication = cGcApplication::GetInstance();
+
+    cGcMain::Construct();
 
     while (!gApplication.mbQuit)
     {
