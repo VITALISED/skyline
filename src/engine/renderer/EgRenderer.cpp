@@ -99,7 +99,8 @@ void cEgRenderer::ConstructRenderpass()
 
 void cEgRenderer::ConstructFramebuffers()
 {
-    VkFramebufferCreateInfo lFramebufferCreateInfo = cTkVulkan::Initialise(this->mRenderPass, this->mSwapchainExtent);
+    VkFramebufferCreateInfo lFramebufferCreateInfo =
+        cTkVkConstructor<VkFramebufferCreateInfo>::Initialise(this->mRenderPass, this->mSwapchainExtent);
 
     const uint32_t luiSwapChainImageCount = this->mvSwapChainImages.size();
     this->mvFramebuffers                  = TkSTD::Vector<VkFramebuffer>(luiSwapChainImageCount);

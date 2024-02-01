@@ -180,3 +180,22 @@ class cTkVkConstructor<VkPresentInfoKHR>
         return lPresentInfo;
     }
 };
+
+template <>
+class cTkVkConstructor<VkFramebufferCreateInfo>
+{
+  public:
+    static inline VkFramebufferCreateInfo Initialise(VkRenderPass lRenderPass, VkExtent2D lExtent)
+    {
+        VkFramebufferCreateInfo lFramebufferCreateInfo = {};
+        lFramebufferCreateInfo.sType                   = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        lFramebufferCreateInfo.pNext                   = NULL;
+        lFramebufferCreateInfo.renderPass              = lRenderPass;
+        lFramebufferCreateInfo.attachmentCount         = 1;
+        lFramebufferCreateInfo.width                   = lExtent.width;
+        lFramebufferCreateInfo.height                  = lExtent.height;
+        lFramebufferCreateInfo.layers                  = 1;
+
+        return lFramebufferCreateInfo;
+    }
+};
