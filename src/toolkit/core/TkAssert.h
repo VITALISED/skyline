@@ -4,7 +4,12 @@
 #include <toolkit/core/TkMacros.h>
 #include <toolkit/core/TkSTD.h>
 
-#define TK_LOG_BASE(message) TkSTD::String("[" __FILE__ ":").append(TkSTD::ToString(__LINE__)).append("] " message)
+#define TK_LOG_BASE(message)               \
+    TkSTD::String("[" __FILE__ "#")        \
+        .append(TkSTD::ToString(__LINE__)) \
+        .append("]\n")                     \
+        .append("(" __FUNCTION__ ") ")     \
+        .append(TkSTD::String(message))
 
 #ifdef D_DEBUG
 #define TK_TRACE(message) cTkAssert::Trace(TK_LOG_BASE(message))
@@ -19,15 +24,6 @@
 #define TK_WARN(message)
 #define TK_ERROR(message) cTkAssert::Error(TK_LOG_BASE(message))
 #endif // D_DEBUG
-
-enum eLogLevel
-{
-    eLogLevel_Trace,
-    eLogLevel_Debug,
-    ELogLevel_Info,
-    eLogLevel_Warn,
-    eLogLevel_Error
-};
 
 class cTkAssert
 {
@@ -46,5 +42,11 @@ class cTkAssert
     {
         cTkAssert::Message(spdlog::level::err, lsMessage);
         if (IsDebuggerPresent()) __debugbreak();
+    }
+
+    static bool Assert(bool lbCondition, TkSTD::String &lsMessage)
+    {
+        if (!lbCondition) cTkAssert::Error(lsMessage);
+        return lbCondition;
     }
 };

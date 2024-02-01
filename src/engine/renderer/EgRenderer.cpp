@@ -28,10 +28,19 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
                  "VK_SUCCESS)");
     }
 
+    const std::vector<const char *> lDeviceExts = {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME};
+
     vkb::PhysicalDeviceSelector lDeviceSelector(lInstance);
-    vkb::PhysicalDevice lPhysicalDevice =
-        lDeviceSelector.set_minimum_version(1, 2).set_surface(this->mSurfaceKHR).select().value();
+    vkb::PhysicalDevice lPhysicalDevice = lDeviceSelector.set_minimum_version(1, 3)
+                                              .add_required_extensions(lDeviceExts)
+                                              .set_surface(this->mSurfaceKHR)
+                                              .set_required_features_13({.synchronization2 = VK_TRUE})
+                                              .select()
+                                              .value();
+
     vkb::DeviceBuilder lDeviceBuilder(lPhysicalDevice);
+
     vkb::Device lDevice = lDeviceBuilder.build().value();
 
     this->mPhysicalDevice = lPhysicalDevice.physical_device;
@@ -40,12 +49,12 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
     this->mGraphicsQueue         = lDevice.get_queue(vkb::QueueType::graphics).value();
     this->muiGraphicsQueueFamily = lDevice.get_queue_index(vkb::QueueType::graphics).value();
     this->mRenderPass            = VkRenderPass();
-    this->mSwapchainExtent       = cTkVulkan::Initialise(gSystem.muiWidth, gSystem.muiHeight);
+    this->mSwapchainExtent       = cTkVkConstructor<VkExtent2D>::Initialise(gSystem.muiWidth, gSystem.muiHeight);
 
     this->ConstructSwapChain();
     this->ConstructRenderpass();
     this->ConstructFramebuffers();
-    this->ConstructSemaphores();
+    this->ConstructSyncStructures();
     this->ConstructCommandBuffers();
 }
 
@@ -72,16 +81,18 @@ void cEgRenderer::ConstructSwapChain()
 
 void cEgRenderer::ConstructRenderpass()
 {
-    VkAttachmentDescription2 lColorAttachment = cTkVulkan::Initialise(this->mSwapChainImageFormat);
+    VkAttachmentDescription2 lColorAttachment =
+        cTkVkConstructor<VkAttachmentDescription2>::Initialise(this->mSwapChainImageFormat);
 
-    VkAttachmentReference2 lColorAttachmentRef = cTkVulkan::Initialise(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+    VkAttachmentReference2 lColorAttachmentRef =
+        cTkVkConstructor<VkAttachmentReference2>::Initialise(0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-    VkSubpassDescription2 lSubpass = cTkVulkan::Initialise(&lColorAttachmentRef, 1);
+    VkSubpassDescription2 lSubpass = cTkVkConstructor<VkSubpassDescription2>::Initialise(&lColorAttachmentRef, 1);
 
-    VkSubpassDependency2 lSubpassDependency = cTkVulkan::Initialise();
+    VkSubpassDependency2 lSubpassDependency = cTkVkConstructor<VkSubpassDependency2>::Initialise();
 
-    VkRenderPassCreateInfo2 lRenderPassCreateInfo =
-        cTkVulkan::Initialise(1, &lColorAttachment, 1, &lSubpass, 1, &lSubpassDependency);
+    VkRenderPassCreateInfo2 lRenderPassCreateInfo = cTkVkConstructor<VkRenderPassCreateInfo2>::Initialise(
+        1, &lColorAttachment, 1, &lSubpass, 1, &lSubpassDependency);
 
     _VK_GUARD(vkCreateRenderPass2(this->mDevice, &lRenderPassCreateInfo, NULL, &this->mRenderPass));
 }
@@ -102,24 +113,20 @@ void cEgRenderer::ConstructFramebuffers()
 
 void cEgRenderer::ConstructCommandBuffers()
 {
-    VkCommandPoolCreateInfo lCommandPoolCreateInfo = cTkVulkan::Initialise(this->muiGraphicsQueueFamily);
+    VkCommandPoolCreateInfo lCommandPoolCreateInfo = cTkVkConstructor<VkCommandPoolCreateInfo>::Initialise(
+        this->muiGraphicsQueueFamily, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
 
     _VK_GUARD(vkCreateCommandPool(this->mDevice, &lCommandPoolCreateInfo, nullptr, &this->mCommandPool));
-
-    VkCommandBufferAllocateInfo lCmdAllocInfo = cTkVulkan::Initialise(this->mCommandPool);
+    VkCommandBufferAllocateInfo lCmdAllocInfo = cTkVkConstructor<VkCommandBufferAllocateInfo>::Initialise(
+        this->mCommandPool, 1, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
     _VK_GUARD(vkAllocateCommandBuffers(this->mDevice, &lCmdAllocInfo, &this->mCommandBuffer));
 }
 
-void cEgRenderer::ConstructSemaphores()
+void cEgRenderer::ConstructSyncStructures()
 {
-    VkFenceCreateInfo lFenceCreateInfo = {};
-    lFenceCreateInfo.sType             = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    lFenceCreateInfo.pNext             = NULL;
-    lFenceCreateInfo.flags             = VK_FENCE_CREATE_SIGNALED_BIT;
-
-    VkSemaphoreCreateInfo lSemaphoreCreateInfo = {};
-    lSemaphoreCreateInfo.sType                 = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    VkFenceCreateInfo lFenceCreateInfo = cTkVkConstructor<VkFenceCreateInfo>::Initialise(VK_FENCE_CREATE_SIGNALED_BIT);
+    VkSemaphoreCreateInfo lSemaphoreCreateInfo = cTkVkConstructor<VkSemaphoreCreateInfo>::Initialise(0);
 
     _VK_GUARD(vkCreateFence(this->mDevice, &lFenceCreateInfo, NULL, &this->mRenderFence));
     _VK_GUARD(vkCreateSemaphore(this->mDevice, &lSemaphoreCreateInfo, NULL, &this->mPresentSemaphore));
@@ -131,17 +138,15 @@ void cEgRenderer::Render()
     _VK_GUARD(vkWaitForFences(this->mDevice, 1, &this->mRenderFence, VK_TRUE, UINT64_MAX));
     _VK_GUARD(vkResetFences(this->mDevice, 1, &this->mRenderFence));
 
+    VkCommandBuffer lCmdBuffer = this->mCommandBuffer;
+    _VK_GUARD(vkResetCommandBuffer(lCmdBuffer, 0));
+
     uint32_t luiImageIndex;
     _VK_GUARD(vkAcquireNextImageKHR(
         this->mDevice, this->mSwapChain, UINT64_MAX, this->mPresentSemaphore, VK_NULL_HANDLE, &luiImageIndex));
 
-    VkCommandBuffer lCmdBuffer = this->mCommandBuffer;
-    _VK_GUARD(vkResetCommandBuffer(lCmdBuffer, 0));
-
-    VkCommandBufferBeginInfo lCmdBufferBeginInfo = {};
-    lCmdBufferBeginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    lCmdBufferBeginInfo.pNext                    = NULL;
-    lCmdBufferBeginInfo.flags                    = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    VkCommandBufferBeginInfo lCmdBufferBeginInfo =
+        cTkVkConstructor<VkCommandBufferBeginInfo>::Initialise(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
     _VK_GUARD(vkBeginCommandBuffer(lCmdBuffer, &lCmdBufferBeginInfo));
 
@@ -149,74 +154,29 @@ void cEgRenderer::Render()
     float lfFlash     = std::abs(std::sin(this->muiFrameNum / 120.0f));
     lClearValue.color = {{0.0f, 0.0f, lfFlash, 1.0f}};
 
-    VkRenderPassBeginInfo lRenderPassBeginInfo = {};
-    lRenderPassBeginInfo.sType                 = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    lRenderPassBeginInfo.pNext                 = NULL;
-    lRenderPassBeginInfo.renderPass            = this->mRenderPass;
-    lRenderPassBeginInfo.framebuffer           = this->mvFramebuffers[luiImageIndex];
-    lRenderPassBeginInfo.renderArea.offset     = {0, 0};
-    lRenderPassBeginInfo.renderArea.extent     = this->mSwapchainExtent;
-    lRenderPassBeginInfo.clearValueCount       = 1;
-    lRenderPassBeginInfo.pClearValues          = &lClearValue;
+    VkRenderPassBeginInfo lRenderPassBeginInfo = cTkVkConstructor<VkRenderPassBeginInfo>::Initialise(
+        this->mRenderPass, this->mvFramebuffers[luiImageIndex], {0, 0}, this->mSwapchainExtent, 1, &lClearValue);
 
-    VkImageSubresourceRange lClearRange = {};
-    lClearRange.aspectMask              = VK_IMAGE_ASPECT_COLOR_BIT;
-    lClearRange.baseMipLevel            = 0;
-    lClearRange.levelCount              = VK_REMAINING_MIP_LEVELS;
-    lClearRange.baseArrayLayer          = 0;
-    lClearRange.layerCount              = VK_REMAINING_ARRAY_LAYERS;
+    VkImageSubresourceRange lClearRange = cTkVkConstructor<VkImageSubresourceRange>::Initialise();
 
     vkCmdBeginRenderPass(lCmdBuffer, &lRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-    // commands?
+    // commands
 
     vkCmdEndRenderPass(lCmdBuffer);
 
     _VK_GUARD(vkEndCommandBuffer(lCmdBuffer));
 
-    VkCommandBufferSubmitInfo lSubmitInfo = {};
-    lSubmitInfo.sType                     = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO;
-    lSubmitInfo.pNext                     = NULL;
-    lSubmitInfo.commandBuffer             = lCmdBuffer;
-    lSubmitInfo.deviceMask                = 0;
-
-    VkSemaphoreSubmitInfo lWaitInfo = {};
-    lWaitInfo.sType                 = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO;
-    lWaitInfo.pNext                 = NULL;
-    lWaitInfo.semaphore             = this->mPresentSemaphore;
-    lWaitInfo.stageMask             = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR;
-    lWaitInfo.deviceIndex           = 0;
-    lWaitInfo.value                 = 1;
-
-    VkSemaphoreSubmitInfo lSignalInfo = {};
-    lSignalInfo.sType                 = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO;
-    lSignalInfo.pNext                 = NULL;
-    lSignalInfo.semaphore             = this->mPresentSemaphore;
-    lSignalInfo.stageMask             = VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT;
-    lSignalInfo.deviceIndex           = 0;
-    lSignalInfo.value                 = 1;
-
-    VkSubmitInfo2 lSubmitInfo2            = {};
-    lSubmitInfo2.sType                    = VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR;
-    lSubmitInfo2.pNext                    = NULL;
-    lSubmitInfo2.waitSemaphoreInfoCount   = 1;
-    lSubmitInfo2.pWaitSemaphoreInfos      = &lWaitInfo;
-    lSubmitInfo2.signalSemaphoreInfoCount = 1;
-    lSubmitInfo2.pSignalSemaphoreInfos    = &lSignalInfo;
-    lSubmitInfo2.commandBufferInfoCount   = 1;
-    lSubmitInfo2.pCommandBufferInfos      = &lSubmitInfo;
-    lSubmitInfo2.flags                    = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR;
+    VkCommandBufferSubmitInfo lSubmitInfo = cTkVkConstructor<VkCommandBufferSubmitInfo>::Initialise(lCmdBuffer);
+    VkSemaphoreSubmitInfo lWaitInfo   = cTkVkConstructor<VkSemaphoreSubmitInfo>::Initialise(this->mPresentSemaphore, 0);
+    VkSemaphoreSubmitInfo lSignalInfo = cTkVkConstructor<VkSemaphoreSubmitInfo>::Initialise(this->mRenderSemaphore, 0);
+    VkSubmitInfo2 lSubmitInfo2 =
+        cTkVkConstructor<VkSubmitInfo2>::Initialise(&lWaitInfo, 1, &lSignalInfo, 1, &lSubmitInfo, 1, 0);
 
     _VK_GUARD(vkQueueSubmit2(this->mGraphicsQueue, 1, &lSubmitInfo2, this->mRenderFence));
 
-    VkPresentInfoKHR lPresentInfo   = {};
-    lPresentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    lPresentInfo.pNext              = NULL;
-    lPresentInfo.pSwapchains        = &this->mSwapChain;
-    lPresentInfo.swapchainCount     = 1;
-    lPresentInfo.pWaitSemaphores    = &this->mRenderSemaphore;
-    lPresentInfo.waitSemaphoreCount = 1;
-    lPresentInfo.pImageIndices      = &luiImageIndex;
+    VkPresentInfoKHR lPresentInfo = cTkVkConstructor<VkPresentInfoKHR>::Initialise(
+        &this->mSwapChain, 1, &this->mRenderSemaphore, 1, &luiImageIndex);
 
     _VK_GUARD(vkQueuePresentKHR(this->mGraphicsQueue, &lPresentInfo));
 
@@ -226,15 +186,23 @@ void cEgRenderer::Render()
 void cEgRenderer::Destruct()
 {
     vkDeviceWaitIdle(this->mDevice);
-    vkDestroyCommandPool(this->mDevice, this->mCommandPool, nullptr);
+    vkDestroyCommandPool(this->mDevice, this->mCommandPool, NULL);
 
-    this->DestructSwapChain();
+    vkDestroyFence(this->mDevice, this->mRenderFence, NULL);
+    vkDestroySemaphore(this->mDevice, this->mPresentSemaphore, NULL);
+    vkDestroySemaphore(this->mDevice, this->mRenderSemaphore, NULL);
+
+    vkDestroySwapchainKHR(this->mDevice, this->mSwapChain, NULL);
+    vkDestroyRenderPass(this->mDevice, this->mRenderPass, NULL);
+    for (int i = 0; i < this->mvFramebuffers.size(); i++)
+    {
+        vkDestroyFramebuffer(this->mDevice, this->mvFramebuffers[i], NULL);
+        vkDestroyImageView(this->mDevice, this->mvSwapChainImageViews[i], NULL);
+    }
 
     vkDestroySurfaceKHR(this->mVkInstance, this->mSurfaceKHR, nullptr);
-    vkDestroyDevice(this->mDevice, nullptr);
     vkb::destroy_debug_utils_messenger(this->mVkInstance, this->mDebugMessenger);
+    vkDestroyDevice(this->mDevice, nullptr);
 
     vkDestroyInstance(this->mVkInstance, nullptr);
 }
-
-void cEgRenderer::DestructSwapChain() {}

@@ -10,9 +10,8 @@ void cTkClock::Construct()
 
 void cTkClock::Update()
 {
-    long double lNewTime   = this->Now();
-    long double lFrameTime = lNewTime - this->mfCurrentTime;
-
-    this->mfCurrentTime = lNewTime;
-    this->mfAccumulator += lFrameTime;
+    long double lNewTime = this->Now();
+    this->mfTimestep     = lNewTime - this->mfCurrentTime;
+    this->mfCurrentTime  = lNewTime;
+    this->mfAccumulator += this->mfTimestep;
 }

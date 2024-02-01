@@ -1,6 +1,5 @@
-set(TKTOOLKIT_SOURCES
-    core/TkAssert.cpp graphics/vulkan/TkVulkan.cpp
-    graphics/api/TkGraphicsAPI.cpp system/timer/TkClock.cpp system/TkSystem.cpp
+set(TKTOOLKIT_SOURCES core/TkAssert.cpp system/timer/TkClock.cpp
+                      system/TkSystem.cpp
 )
 
 set(TKTOOLKIT_HEADERS
@@ -12,7 +11,11 @@ set(TKTOOLKIT_HEADERS
     core/TkString.h
     engine/TkEngineSettings.h
     graphics/vulkan/TkVulkan.h
-    graphics/api/TkGraphicsAPI.h
+    graphics/vulkan/constructors/TkVulkanConstructors.h
+    graphics/vulkan/constructors/TkVulkanCommandStructures.h
+    graphics/vulkan/constructors/TkVulkanRenderPassStructures.h
+    graphics/vulkan/constructors/TkVulkanSyncStructures.h
+    graphics/vulkan/constructors/TkVkConstructorIncludes.inl
     maths/numeric/TkIntrinsics.h
     maths/numeric/TkVector2.h
     maths/numeric/TkVector3.h

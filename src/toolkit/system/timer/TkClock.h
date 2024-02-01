@@ -24,9 +24,11 @@ class cTkClock
     }
 
     inline bool IsAccumulatorGreaterThanDT() { return this->mfAccumulator >= kfFixedTimeStep; }
+    inline float GetTimestep() { return this->mfTimestep; }
 
     static const long double kfFixedTimeStep;
 
+    float mfTimestep;
     long double mfCurrentTime;
     long double mfAccumulator;
     long double mfTime;

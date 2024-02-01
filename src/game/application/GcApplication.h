@@ -7,7 +7,7 @@ class cGcApplication : public cTkSingleton<cGcApplication>
   public:
     void Construct();
     void Destruct();
-    void Update();
+    void Update(float lfTimestep);
 
     bool mbQuit;
     cTkClock *mpClock;

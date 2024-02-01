@@ -4,13 +4,6 @@
 #include <toolkit/graphics/vulkan/TkVulkan.h>
 #include <toolkit/system/TkSystem.h>
 
-#ifdef D_DEBUG
-#define _VK_GUARD(x) \
-    if (x != VK_SUCCESS) { TK_ERROR("Vulkan Error: " #x " failed"); }
-#else
-#define _VK_GUARD(x) x
-#endif
-
 class cEgRenderer
 {
   public:
@@ -21,12 +14,9 @@ class cEgRenderer
     void ConstructRenderpass();
     void ConstructFramebuffers();
     void ConstructCommandBuffers();
-    void ConstructSemaphores();
+    void ConstructSyncStructures();
 
     void Destruct();
-    void DestructSwapChain();
-    void DestructCommandBuffers();
-    void DestructSemaphores();
 
     void Render();
     // cEgFrameData &GetCurrentFrame() { return mFrames[muiFrameNum % cEgFrameData::kiFrameOverlap]; }

@@ -14,7 +14,6 @@ void cEgEngine::Destruct()
 {
     delete this->mpRenderer;
     delete this->mpSettings;
-    delete this;
 }
 
 void cEgEngine::Configure(cTkEngineSettings &lSettings)

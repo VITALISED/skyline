@@ -49,4 +49,28 @@ using Function = std::function<T>;
 
 template <typename T>
 using Vector = std::vector<T, TkSTLAllocator<T>>;
+
+template <typename... Args>
+auto Format(std::_Fmt_string<Args...> format, Args &&...args)
+{
+    return std::format(format, std::forward<Args>(args)...);
+}
+
 } // namespace TkSTD
+
+template <>
+struct std::formatter<TkSTD::String, char>
+{
+    template <class ParseContext>
+    constexpr ParseContext::iterator parse(ParseContext &ctx)
+    {
+        return std::formatter<std::string, char>::parse(ctx);
+    }
+
+    template <class FmtContext>
+    FmtContext::iterator format(const TkSTD::String &str, FmtContext &ctx) const
+    {
+        std::string stdStr(str.begin(), str.end());
+        return std::formatter<std::string, char>::format(stdStr, ctx);
+    }
+};

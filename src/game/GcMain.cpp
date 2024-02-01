@@ -25,7 +25,8 @@ int cGcMain::Main()
         gApplication.mpClock->Update();
         while (gApplication.mpClock->IsAccumulatorGreaterThanDT())
         {
-            gApplication.Update();
+            float lfTimestep = gApplication.mpClock->GetTimestep();
+            gApplication.Update(lfTimestep);
             gApplication.mpClock->SyncAccumulatorUpdate();
         }
 
@@ -52,15 +53,26 @@ void cGcMain::Destruct()
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+#ifdef D_DEBUG
     AllocConsole();
     SetConsoleTitle("GcGame");
     freopen("CONOUT$", "wt", stdout);
+#endif
 
     int liResult = cGcMain::Main();
 
+#ifdef D_DEBUG
     FreeConsole();
+#endif
 
     return liResult;
+}
+
+#else
+
+int main(int argc, char *argv[])
+{
+    return cGcMain::Main();
 }
 
 #endif
