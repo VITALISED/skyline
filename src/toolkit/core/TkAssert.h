@@ -10,12 +10,12 @@
         .append("]\n")                     \
         .append("(" __FUNCTION__ ") ")     \
         .append(TkSTD::String(message))
-#define TK_LOG_ASSERT(condition, ...)                 \
-    TkSTD::String("[" __FILE__ "#")                   \
-        .append(TkSTD::ToString(__LINE__))            \
-        .append("]\n")                                \
-        .append("(" __FUNCTION__ ") Assert Failed: ") \
-        .append(TkSTD::String(__VA_ARGS__ "\n"))      \
+#define TK_LOG_ASSERT(condition, ...)                    \
+    TkSTD::String("[" __FILE__ "#")                      \
+        .append(TkSTD::ToString(__LINE__))               \
+        .append("]\n")                                   \
+        .append("(" __FUNCTION__ ") Assert Failed: ")    \
+        .append(TkSTD::String(__VA_ARGS__).append("\n")) \
         .append("(" #condition ")")
 
 #ifdef D_DEBUG

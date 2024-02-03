@@ -1,5 +1,6 @@
 #pragma once
 
+#include <engine/renderer/EgDeletionQueue.h>
 #include <toolkit/engine/TkEngineSettings.h>
 #include <toolkit/graphics/vulkan/TkVulkan.h>
 #include <toolkit/system/TkSystem.h>
@@ -19,8 +20,18 @@ class cEgRenderer
     void Destruct();
 
     void Render();
-    // cEgFrameData &GetCurrentFrame() { return mFrames[muiFrameNum % cEgFrameData::kiFrameOverlap]; }
 
+    class AllocatedImage
+    {
+      public:
+        VkImage mImage;
+        VkImageView mImageView;
+        VmaAllocation mAllocation;
+        VkExtent3D mImageExtent;
+        VkFormat mImageFormat;
+    };
+
+    VmaAllocator mAllocator;
     VkInstance mVkInstance;
     VkSurfaceKHR mSurfaceKHR;
     VkDebugUtilsMessengerEXT mDebugMessenger;
@@ -34,6 +45,7 @@ class cEgRenderer
 
     VkSwapchainKHR mSwapChain;
     VkFormat mSwapChainImageFormat;
+    AllocatedImage mDrawImage;
     VkExtent2D mSwapchainExtent;
 
     VkSemaphore mPresentSemaphore, mRenderSemaphore;
@@ -42,6 +54,8 @@ class cEgRenderer
     TkSTD::Vector<VkFramebuffer> mvFramebuffers;
     TkSTD::Vector<VkImage> mvSwapChainImages;
     TkSTD::Vector<VkImageView> mvSwapChainImageViews;
+
+    cEgDeletionQueue mPrimaryDeletionQueue;
 
     uint32_t muiFrameNum = NULL;
 };

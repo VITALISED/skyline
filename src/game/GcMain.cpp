@@ -22,8 +22,6 @@ int cGcMain::Main()
 {
     TK_INFO("Starting Game Process!");
 
-    TK_ASSERT(1 == 1, "Assert test!!!");
-
     cTkSystem &gSystem           = cTkSystem::GetInstance();
     cEgEngine &gEngine           = cEgEngine::GetInstance();
     cGcApplication &gApplication = cGcApplication::GetInstance();

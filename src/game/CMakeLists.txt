@@ -17,3 +17,5 @@ target_include_directories(GcGame PRIVATE ${SKYLINE_SRC_DIR})
 target_link_libraries(GcGame PRIVATE EgEngine TkToolkit)
 
 target_precompile_headers(GcGame PRIVATE GcPch.h)
+
+add_dependencies(GcGame Shaders)

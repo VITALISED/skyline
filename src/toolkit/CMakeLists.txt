@@ -1,9 +1,10 @@
-set(TKTOOLKIT_SOURCES core/TkAssert.cpp system/timer/TkClock.cpp
-                      system/TkSystem.cpp
+set(TKTOOLKIT_SOURCES core/TkAssert.cpp system/filesystem/TkFilesystem.cpp
+                      system/timer/TkClock.cpp system/TkSystem.cpp
 )
 
 set(TKTOOLKIT_HEADERS
     core/TkAssert.h
+    core/TkHandle.h
     core/TkCore.h
     core/TkMacros.h
     core/TkSingleton.h
@@ -11,6 +12,9 @@ set(TKTOOLKIT_HEADERS
     core/TkString.h
     engine/TkEngineSettings.h
     graphics/vulkan/TkVulkan.h
+    graphics/vulkan/vk_mem_alloc.h
+    graphics/vulkan/constructors/TkVmaStructures.h
+    graphics/vulkan/constructors/TkVulkanImageStructures.h
     graphics/vulkan/constructors/TkVulkanConstructors.h
     graphics/vulkan/constructors/TkVulkanCommandStructures.h
     graphics/vulkan/constructors/TkVulkanRenderPassStructures.h
@@ -21,6 +25,8 @@ set(TKTOOLKIT_HEADERS
     maths/numeric/TkVector3.h
     maths/numeric/TkVector4.h
     maths/numeric/TkMatrix34.h
+    system/filesystem/TkFilesystem.h
+    system/filesystem/TkVPAK.h
     system/timer/TkClock.h
     system/TkSystem.h
 )

@@ -1,6 +1,10 @@
-set(EGENGINE_HEADERS EgMain.h renderer/EgRenderer.h renderer/EgQueue.h)
+set(EGENGINE_HEADERS EgMain.h renderer/EgRenderer.h renderer/EgDeletionQueue.h
+                     renderer/EgDescriptor.h renderer/EgPipeline.h
+)
 
-set(EGENGINE_SOURCES EgMain.cpp renderer/EgRenderer.cpp)
+set(EGENGINE_SOURCES EgMain.cpp renderer/EgRenderer.cpp
+                     renderer/EgDescriptor.cpp
+)
 
 add_library(EgEngine ${EGENGINE_HEADERS} ${EGENGINE_SOURCES})
 

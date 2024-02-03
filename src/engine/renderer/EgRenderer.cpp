@@ -1,5 +1,8 @@
 #include <engine/renderer/EgRenderer.h>
 
+#define VMA_IMPLEMENTATION
+#include <toolkit/graphics/vulkan/vk_mem_alloc.h>
+
 void cEgRenderer::Construct(cTkEngineSettings &lSettings)
 {
     cTkSystem &gSystem = cTkSystem::GetInstance();
@@ -32,6 +35,7 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
                                               .add_required_extensions(lDeviceExts)
                                               .set_surface(this->mSurfaceKHR)
                                               .set_required_features_13({.synchronization2 = VK_TRUE})
+                                              .set_required_features_12({.bufferDeviceAddress = VK_TRUE})
                                               .select()
                                               .value();
 
@@ -46,6 +50,12 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
     this->muiGraphicsQueueFamily = lDevice.get_queue_index(vkb::QueueType::graphics).value();
     this->mRenderPass            = VkRenderPass();
     this->mSwapchainExtent       = cTkVkConstructor<VkExtent2D>::Initialise(gSystem.muiWidth, gSystem.muiHeight);
+
+    VmaAllocatorCreateInfo lAllocatorInfo = cTkVkConstructor<VmaAllocatorCreateInfo>::Initialise(
+        this->mPhysicalDevice, this->mDevice, this->mVkInstance, VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT);
+    vmaCreateAllocator(&lAllocatorInfo, &this->mAllocator);
+
+    this->mPrimaryDeletionQueue.PushFunction([&]() { vmaDestroyAllocator(this->mAllocator); });
 
     this->ConstructSwapChain();
     this->ConstructRenderpass();
@@ -65,14 +75,42 @@ void cEgRenderer::ConstructSwapChain()
                                     .build()
                                     .value();
 
-    // hacky fix to copy out the vectors since we aren't using std::allocator.
-    // could be better but then we wouldnt be using vkb
     this->mSwapChain                       = lSwapChain.swapchain;
     std::vector<VkImage> lImageVec         = lSwapChain.get_images().value();
     this->mvSwapChainImages                = TkSTD::Vector<VkImage>(lImageVec.begin(), lImageVec.end());
     std::vector<VkImageView> lImageViewVec = lSwapChain.get_image_views().value();
     this->mvSwapChainImageViews            = TkSTD::Vector<VkImageView>(lImageViewVec.begin(), lImageViewVec.end());
     this->mSwapChainImageFormat            = lSwapChain.image_format;
+
+    VkExtent3D lDrawImageExtent   = {.width = gSystem.muiWidth, .height = gSystem.muiHeight, .depth = 1};
+    this->mDrawImage.mImageFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
+    this->mDrawImage.mImageExtent = lDrawImageExtent;
+
+    VkImageUsageFlags lDrawImageUsageFlags = {};
+    lDrawImageUsageFlags |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+    lDrawImageUsageFlags |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    lDrawImageUsageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
+    lDrawImageUsageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+    VkImageCreateInfo lImageCreateInfo = cTkVkConstructor<VkImageCreateInfo>::Initialise(
+        this->mDrawImage.mImageFormat, lDrawImageUsageFlags, this->mDrawImage.mImageExtent);
+
+    VmaAllocationCreateInfo lImageAllocCreateInfo = cTkVkConstructor<VmaAllocationCreateInfo>::Initialise(
+        VMA_MEMORY_USAGE_GPU_ONLY, VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+
+    _VK_GUARD(vmaCreateImage(
+        this->mAllocator, &lImageCreateInfo, &lImageAllocCreateInfo, &this->mDrawImage.mImage,
+        &this->mDrawImage.mAllocation, NULL));
+
+    VkImageViewCreateInfo lImageViewInfo = cTkVkConstructor<VkImageViewCreateInfo>::Initialise(
+        this->mDrawImage.mImageFormat, this->mDrawImage.mImage, VK_IMAGE_ASPECT_COLOR_BIT);
+
+    _VK_GUARD(vkCreateImageView(this->mDevice, &lImageViewInfo, NULL, &this->mDrawImage.mImageView));
+
+    this->mPrimaryDeletionQueue.PushFunction([&]() {
+        vkDestroyImageView(this->mDevice, this->mDrawImage.mImageView, NULL);
+        vmaDestroyImage(this->mAllocator, this->mDrawImage.mImage, this->mDrawImage.mAllocation);
+    });
 }
 
 void cEgRenderer::ConstructRenderpass()
@@ -133,6 +171,7 @@ void cEgRenderer::ConstructSyncStructures()
 void cEgRenderer::Render()
 {
     _VK_GUARD(vkWaitForFences(this->mDevice, 1, &this->mRenderFence, VK_TRUE, UINT64_MAX));
+
     _VK_GUARD(vkResetFences(this->mDevice, 1, &this->mRenderFence));
 
     VkCommandBuffer lCmdBuffer = this->mCommandBuffer;
@@ -183,6 +222,7 @@ void cEgRenderer::Render()
 void cEgRenderer::Destruct()
 {
     vkDeviceWaitIdle(this->mDevice);
+    this->mPrimaryDeletionQueue.Flush();
     vkDestroyCommandPool(this->mDevice, this->mCommandPool, NULL);
 
     vkDestroyFence(this->mDevice, this->mRenderFence, NULL);

@@ -7,3 +7,9 @@
 [submodule "submodules/vk-bootstrap"]
 	path = submodules/vk-bootstrap
 	url = https://github.com/charles-lunarg/vk-bootstrap.git
+[submodule "submodules/WAVM"]
+	path = submodules/WAVM
+	url = https://github.com/WAVM/WAVM.git
+[submodule "submodules/RmlUi"]
+	path = submodules/RmlUi
+	url = https://github.com/mikke89/RmlUi.git

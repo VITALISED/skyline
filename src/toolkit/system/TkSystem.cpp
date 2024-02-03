@@ -3,6 +3,7 @@
 void cTkSystem::Construct()
 {
     glfwInit();
+    this->mpFilesystem = new cTkFilesystem();
 
     this->muiHeight = 720;
     this->muiWidth  = 1280;
@@ -11,9 +12,11 @@ void cTkSystem::Construct()
 
 void cTkSystem::Destruct()
 {
+    this->mpFilesystem->Destruct();
+    delete this->mpFilesystem;
+
     glfwDestroyWindow(this->mpGLFWWindow);
     glfwTerminate();
-    delete this;
 }
 
 void cTkSystem::ConstructVideo()
