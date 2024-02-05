@@ -26,6 +26,8 @@ class cTkFilesystem
 
     cTkFileHandle Open(const char *lpacFilename, const char *lpacMode);
     void Close(cTkFileHandle lFileHandle);
+    TkSTD::SizeType Read(cTkFileHandle lFileHandle, void *lpData, TkSTD::SizeType luiSize, TkSTD::SizeType luiCount);
+    
 
     TkSTD::UnorderedMap<int, TkSTD::File *> maFiles;
     TkSTD::UnorderedMap<const char *, int> maCachedFilenames;

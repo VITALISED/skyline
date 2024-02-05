@@ -14,3 +14,4 @@ build/*
 /.vs/*
 /.cache/*
 /*.vpak
+/*.spv
