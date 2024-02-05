@@ -171,7 +171,6 @@ void cEgRenderer::ConstructSyncStructures()
 void cEgRenderer::Render()
 {
     _VK_GUARD(vkWaitForFences(this->mDevice, 1, &this->mRenderFence, VK_TRUE, UINT64_MAX));
-
     _VK_GUARD(vkResetFences(this->mDevice, 1, &this->mRenderFence));
 
     VkCommandBuffer lCmdBuffer = this->mCommandBuffer;
