@@ -14,4 +14,4 @@ build/*
 /.vs/*
 /.cache/*
 /*.vpak
-/*.spv
+project/spriv/*
