@@ -2,8 +2,8 @@
 
 void cTkFilesystem::Construct()
 {
-    this->maFiles           = TkSTD::UnorderedMap<int, TkSTD::File *>();
-    this->maCachedFilenames = TkSTD::UnorderedMap<const char *, int>();
+    this->maFiles           = TkSTD::UnorderedMap<uint32_t, TkSTD::File *>();
+    this->maCachedFilenames = TkSTD::UnorderedMap<const char *, uint32_t>();
 }
 
 void cTkFilesystem::Destruct()
@@ -26,10 +26,9 @@ cTkFileHandle cTkFilesystem::Open(const char *lpacFilename, const char *lpacMode
 
     TkSTD::File *lFile = fopen(lpacFilename, lpacMode);
 
-#ifdef D_DEBUG
-    TkSTD::String lAssertMessage = TkSTD::Format("File could not be opened. (Is the path correct?) {}", lpacFilename);
-    TK_ASSERT(lFile != NULL, lAssertMessage);
-#endif
+    TK_ASSERT(lFile != NULL, TkSTD::Format("File could not be opened. (Is the path correct?) {}", lpacFilename));
+
+    if (lFile == NULL) { return TK_NULLFH; }
 
     this->maFiles.insert({liIncrement, lFile});
     this->maCachedFilenames.insert({lpacFilename, liIncrement});
@@ -52,4 +51,17 @@ void cTkFilesystem::Close(cTkFileHandle lFileHandle)
             break;
         }
     }
+
+    lFileHandle = cTkFileHandle();
+}
+
+void cTkFilesystem::SetWorkingDirectory(const char *lpacDirectory)
+{
+#ifdef D_MSVC
+    int liResult = _chdir(lpacDirectory);
+#else
+    int liResult = chdir(lpacDirectory);
+#endif
+
+    TK_ASSERT(liResult == 0, TkSTD::Format("Could not change working directory: {}", strerror(liResult)));
 }

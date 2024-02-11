@@ -12,6 +12,11 @@ void cGcMain::Construct()
     cTkEngineSettings lSettings = cTkEngineSettings(
         lsApplicationName, VK_MAKE_API_VERSION(0, 1, 0, 0), lsEngineName, VK_MAKE_API_VERSION(0, 1, 0, 0));
     gSystem.Construct();
+
+#ifdef D_DEBUG
+    gSystem.SetWorkingDirectory(D_WORKING_DIR);
+#endif
+
     gEngine.Configure(lSettings);
     gApplication.Construct();
 
@@ -27,6 +32,15 @@ int cGcMain::Main()
     cGcApplication &gApplication = cGcApplication::GetInstance();
 
     cGcMain::Construct();
+
+    cTkFileHandle lFH = gSystem.mpFilesystem->Open("test.txt", "r");
+
+    for (int i = 0; i < 10; i++)
+    {
+        char buffer[256];
+        lFH->Read(buffer, 1, 256);
+        TK_INFO(buffer);
+    }
 
     while (!gApplication.mbQuit)
     {

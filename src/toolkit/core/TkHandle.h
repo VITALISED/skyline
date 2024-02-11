@@ -2,36 +2,19 @@
 
 #include <toolkit/core/TkSTD.h>
 
-struct TkNodeID
-{
-    uint32_t miValue;
-};
-
-struct TkFileID
-{
-
-    union {
-        struct
-        {
-            bool IsCompressed : 1;
-            bool IsCached : 1;
-            bool IsReadOnly : 1;
-            bool _Reserved : 5;
-            uint32_t muiLookup : 24;
-        };
-        uint32_t muiValue;
-    };
-};
-
-struct TkResourceID
-{
-    uint32_t miValue;
-};
-
-template <typename T>
+template <typename T, typename R>
 class cTkHandle
 {
   public:
-    using HandleType = T;
-    HandleType mID;
+    using HandleIDType = T;
+    using InnerType    = R;
+
+    InnerType &Get();
+    void Set(InnerType &lFile);
+    bool IsValid() const { return reinterpret_cast<uint64_t>(this->mID) != TK_NULL; }
+
+    InnerType &operator*() { return this->Get(); }
+    InnerType *operator->() { return &this->Get(); }
+
+    HandleIDType mID;
 };

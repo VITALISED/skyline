@@ -62,6 +62,35 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
     this->ConstructFramebuffers();
     this->ConstructSyncStructures();
     this->ConstructCommandBuffers();
+    this->ConstructDescriptors();
+}
+
+void cEgRenderer::ConstructDescriptors()
+{
+    this->mpDescriptorAllocator = new cEgDescriptorAllocator();
+
+    TkSTD::Vector<cEgDescriptorAllocator::PoolSizeRatio> lPoolSizeRatios = {{VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1.0f}};
+    this->mpDescriptorAllocator->Construct(this->mDevice, 10, lPoolSizeRatios);
+
+    cEgDescriptorLayoutBuilder lLayoutBuilder;
+    lLayoutBuilder.AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+    this->mDrawImageDescriptorLayout = lLayoutBuilder.Build(this->mDevice, VK_SHADER_STAGE_COMPUTE_BIT);
+
+    this->mDrawImageDescriptors =
+        this->mpDescriptorAllocator->Allocate(this->mDevice, this->mDrawImageDescriptorLayout);
+    VkDescriptorImageInfo lImageInfo = {};
+    lImageInfo.imageLayout           = VK_IMAGE_LAYOUT_GENERAL;
+    lImageInfo.imageView             = this->mDrawImage.mImageView;
+
+    VkWriteDescriptorSet lImageWrite = {};
+    lImageWrite.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    lImageWrite.pNext                = NULL;
+    lImageWrite.dstBinding           = 0;
+    lImageWrite.dstSet               = this->mDrawImageDescriptors;
+    lImageWrite.descriptorCount      = 1;
+    lImageWrite.descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    lImageWrite.pImageInfo           = &lImageInfo;
+    vkUpdateDescriptorSets(this->mDevice, 1, &lImageWrite, 0, NULL);
 }
 
 void cEgRenderer::ConstructSwapChain()
@@ -227,6 +256,8 @@ void cEgRenderer::Destruct()
     vkDestroyFence(this->mDevice, this->mRenderFence, NULL);
     vkDestroySemaphore(this->mDevice, this->mPresentSemaphore, NULL);
     vkDestroySemaphore(this->mDevice, this->mRenderSemaphore, NULL);
+
+    delete this->mpDescriptorAllocator;
 
     vkDestroySwapchainKHR(this->mDevice, this->mSwapChain, NULL);
     vkDestroyRenderPass(this->mDevice, this->mRenderPass, NULL);

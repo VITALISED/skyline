@@ -14,6 +14,10 @@ add_executable(GcGame ${GCGAME_BUNDLE} ${GCGAME_SOURCES} ${GCGAME_HEADERS})
 
 target_include_directories(GcGame PRIVATE ${SKYLINE_SRC_DIR})
 
+target_compile_definitions(
+    GcGame PRIVATE -DD_WORKING_DIR="${PROJECT_SOURCE_DIR}/"
+)
+
 target_link_libraries(GcGame PRIVATE EgEngine TkToolkit)
 
 target_precompile_headers(GcGame PRIVATE GcPch.h)

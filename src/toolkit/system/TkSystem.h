@@ -13,6 +13,7 @@ class cTkSystem : public cTkSingleton<cTkSystem>
 
     void ConstructVideo();
     void PollForEvents();
+    void SetWorkingDirectory(const char *lpacDirectory);
 
     uint32_t muiWidth;
     uint32_t muiHeight;

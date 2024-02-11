@@ -8,6 +8,4 @@
 #include <toolkit/core/TkSingleton.h>
 #include <toolkit/core/TkString.h>
 
-typedef cTkHandle<TkNodeID> cTkNodeHandle;
-typedef cTkHandle<TkFileID> cTkFileHandle;
-typedef cTkHandle<TkResourceID> cTkResourceHandle;
+typedef size_t TkSizeType;

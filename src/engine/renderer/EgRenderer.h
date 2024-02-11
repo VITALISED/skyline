@@ -1,6 +1,7 @@
 #pragma once
 
 #include <engine/renderer/EgDeletionQueue.h>
+#include <engine/renderer/EgDescriptor.h>
 #include <toolkit/engine/TkEngineSettings.h>
 #include <toolkit/graphics/vulkan/TkVulkan.h>
 #include <toolkit/system/TkSystem.h>
@@ -16,6 +17,7 @@ class cEgRenderer
     void ConstructFramebuffers();
     void ConstructCommandBuffers();
     void ConstructSyncStructures();
+    void ConstructDescriptors();
 
     void Destruct();
 
@@ -47,6 +49,10 @@ class cEgRenderer
     VkFormat mSwapChainImageFormat;
     AllocatedImage mDrawImage;
     VkExtent2D mSwapchainExtent;
+
+    cEgDescriptorAllocator *mpDescriptorAllocator;
+    VkDescriptorSet mDrawImageDescriptors;
+    VkDescriptorSetLayout mDrawImageDescriptorLayout;
 
     VkSemaphore mPresentSemaphore, mRenderSemaphore;
     VkFence mRenderFence;

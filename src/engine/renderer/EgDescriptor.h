@@ -3,24 +3,30 @@
 #include <toolkit/core/TkCore.h>
 #include <toolkit/graphics/vulkan/TkVulkan.h>
 
-class cEgDescriptorPool
+class cEgDescriptorAllocator
 {
   public:
-    struct PoolSizeRatio;
-
-    void Construct(VkDevice device, uint32_t maxSets, TkSTD::Span<PoolSizeRatio> poolRatios);
-    void SetupBindings(uint32_t luiBinding, VkDescriptorType leType);
-    void ClearDescriptors(VkDevice device);
-    void Destruct(VkDevice device);
-
-    struct PoolSizeRatio
+    class PoolSizeRatio
     {
+      public:
         VkDescriptorType meType;
         float mfRatio;
     };
 
-    VkDescriptorPool mPool;
+    void Construct(VkDevice lDevice, uint32_t luiMaxSets, const TkSTD::Span<PoolSizeRatio> &lPoolSizeRatios);
+    void Clear(VkDevice lDevice);
+    void Destruct(VkDevice lDevice);
+    VkDescriptorSet Allocate(VkDevice lDevice, VkDescriptorSetLayout lLayout);
 
-    VkDescriptorSet mDrawImageDescriptors;
-    VkDescriptorSetLayout mDrawImageDescriptorLayout;
+    VkDescriptorPool mPool;
+};
+
+class cEgDescriptorLayoutBuilder
+{
+  public:
+    void AddBinding(uint32_t luiBinding, VkDescriptorType leType);
+    void Clear();
+    VkDescriptorSetLayout Build(VkDevice lDevice, VkShaderStageFlags lxShaderStages);
+
+    TkSTD::Vector<VkDescriptorSetLayoutBinding> mvBindings;
 };

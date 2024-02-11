@@ -1,5 +1,7 @@
-set(TKTOOLKIT_SOURCES core/TkAssert.cpp system/filesystem/TkFilesystem.cpp
-                      system/timer/TkClock.cpp system/TkSystem.cpp
+set(TKTOOLKIT_SOURCES
+    core/TkAssert.cpp system/filesystem/TkFile.cpp
+    system/filesystem/TkFilesystem.cpp system/timer/TkClock.cpp
+    system/TkSystem.cpp
 )
 
 set(TKTOOLKIT_HEADERS
@@ -25,6 +27,7 @@ set(TKTOOLKIT_HEADERS
     maths/numeric/TkVector3.h
     maths/numeric/TkVector4.h
     maths/numeric/TkMatrix34.h
+    system/filesystem/TkFile.h
     system/filesystem/TkFilesystem.h
     system/filesystem/TkVPAK.h
     system/timer/TkClock.h

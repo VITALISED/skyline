@@ -7,8 +7,7 @@
 #include <toolkit/graphics/vulkan/vk_mem_alloc.h>
 
 #ifdef D_DEBUG
-#define _VK_GUARD(x) \
-    if (x != VK_SUCCESS) { TK_ERROR("Vulkan Error: " #x " failed"); }
+#define _VK_GUARD(x) TK_ASSERT((x == VK_SUCCESS), "Vulkan error.");
 #else
 #define _VK_GUARD(x) x
 #endif

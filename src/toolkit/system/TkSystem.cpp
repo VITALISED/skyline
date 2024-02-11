@@ -31,3 +31,9 @@ void cTkSystem::PollForEvents()
 {
     if (!glfwWindowShouldClose(this->mpGLFWWindow)) { glfwPollEvents(); }
 }
+
+void cTkSystem::SetWorkingDirectory(const char *lpacDirectory)
+{
+    TK_INFO(TkSTD::Format("Setting working directory to: {}", lpacDirectory));
+    this->mpFilesystem->SetWorkingDirectory(lpacDirectory);
+}
