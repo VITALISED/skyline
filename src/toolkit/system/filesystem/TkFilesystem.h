@@ -2,6 +2,7 @@
 
 #include <toolkit/core/TkCore.h>
 #include <toolkit/system/filesystem/TkFile.h>
+#include <toolkit/system/filesystem/TkFileHandleMap.h>
 
 class cTkFilesystem
 {
@@ -9,20 +10,13 @@ class cTkFilesystem
     void Construct();
     void Destruct();
 
-    inline cTkFileHandle CreateHandle(uint32_t luiIncrement)
-    {
-        cTkFileHandle lHandle;
-        lHandle.mID.mbCached     = true;
-        lHandle.mID.mbCompressed = false;
-        lHandle.mID.mbReadOnly   = false;
-        lHandle.mID.muiLookup    = luiIncrement;
-        return lHandle;
-    }
-
     cTkFileHandle Open(const char *lpacFilename, const char *lpacMode);
-    void Close(cTkFileHandle lFileHandle);
+    void Close(cTkFile *lpFile);
+    cTkFileHandle GetFHandle(cTkID lID);
+    cTkFile *GetFile(cTkFileHandle lFileHandle) { return this->GetFile(lFileHandle.mID.muiLookup); }
+    cTkFile *GetFile(const TkFileLookup &lacLookup);
     void SetWorkingDirectory(const char *lpacDirectory);
 
-    TkSTD::UnorderedMap<uint32_t, TkSTD::File *> maFiles;
-    TkSTD::UnorderedMap<const char *, uint32_t> maCachedFilenames;
+    cTkFileHandleMap maFiles;
+    cTkIDMap<cTkFileHandle> maCachedFilenames;
 };

@@ -33,15 +33,6 @@ int cGcMain::Main()
 
     cGcMain::Construct();
 
-    cTkFileHandle lFH = gSystem.mpFilesystem->Open("test.txt", "r");
-
-    for (int i = 0; i < 10; i++)
-    {
-        char buffer[256];
-        lFH->Read(buffer, 1, 256);
-        TK_INFO(buffer);
-    }
-
     while (!gApplication.mbQuit)
     {
         gSystem.PollForEvents();

@@ -1,12 +1,18 @@
 set(TKTOOLKIT_SOURCES
-    core/TkAssert.cpp system/filesystem/TkFile.cpp
-    system/filesystem/TkFilesystem.cpp system/timer/TkClock.cpp
+    core/TkAssert.cpp
+    system/filesystem/TkFile.cpp
+    system/filesystem/TkFilesystem.cpp
+    system/filesystem/TkFileHandle.cpp
+    system/filesystem/TkFileHandleMap.cpp
+    system/timer/TkClock.cpp
     system/TkSystem.cpp
 )
 
 set(TKTOOLKIT_HEADERS
     core/TkAssert.h
     core/TkHandle.h
+    core/TkID.h
+    core/TkIDMap.h
     core/TkCore.h
     core/TkMacros.h
     core/TkSingleton.h
@@ -27,6 +33,7 @@ set(TKTOOLKIT_HEADERS
     maths/numeric/TkVector3.h
     maths/numeric/TkVector4.h
     maths/numeric/TkMatrix34.h
+    maths/hash/TkHash.h
     system/filesystem/TkFile.h
     system/filesystem/TkFilesystem.h
     system/filesystem/TkVPAK.h

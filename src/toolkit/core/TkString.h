@@ -9,6 +9,7 @@ class cTkFixedString
     cTkFixedString() = default;
     cTkFixedString(const char *lpacBuffer) { this->Copy(lpacBuffer); }
     void Copy(const char *lpacBuffer) { strcpy_s(macBuffer, Size, lpacBuffer); }
+    int Length() { return strlen(macBuffer); }
 
     CharSet macBuffer[Size];
 };
