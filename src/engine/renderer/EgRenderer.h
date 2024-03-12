@@ -57,9 +57,9 @@ class cEgRenderer
     VkSemaphore mPresentSemaphore, mRenderSemaphore;
     VkFence mRenderFence;
 
-    TkSTD::Vector<VkFramebuffer> mvFramebuffers;
-    TkSTD::Vector<VkImage> mvSwapChainImages;
-    TkSTD::Vector<VkImageView> mvSwapChainImageViews;
+    std::vector<VkFramebuffer> mvFramebuffers;
+    std::vector<VkImage> mvSwapChainImages;
+    std::vector<VkImageView> mvSwapChainImageViews;
 
     cEgDeletionQueue mPrimaryDeletionQueue;
 

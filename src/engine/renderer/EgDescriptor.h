@@ -13,7 +13,7 @@ class cEgDescriptorAllocator
         float mfRatio;
     };
 
-    void Construct(VkDevice lDevice, uint32_t luiMaxSets, const TkSTD::Span<PoolSizeRatio> &lPoolSizeRatios);
+    void Construct(VkDevice lDevice, uint32_t luiMaxSets, const std::span<PoolSizeRatio> &lPoolSizeRatios);
     void Clear(VkDevice lDevice);
     void Destruct(VkDevice lDevice);
     VkDescriptorSet Allocate(VkDevice lDevice, VkDescriptorSetLayout lLayout);
@@ -28,5 +28,5 @@ class cEgDescriptorLayoutBuilder
     void Clear();
     VkDescriptorSetLayout Build(VkDevice lDevice, VkShaderStageFlags lxShaderStages);
 
-    TkSTD::Vector<VkDescriptorSetLayoutBinding> mvBindings;
+    std::vector<VkDescriptorSetLayoutBinding> mvBindings;
 };

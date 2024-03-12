@@ -16,6 +16,6 @@
 
 #endif // D_MSVC
 
-#define TK_NULL 0;
+#define TK_NULL 0
 
 #define TK_STRINGIFY(x) #x

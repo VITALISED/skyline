@@ -18,7 +18,7 @@ find_package(Vulkan REQUIRED)
 
 add_library(SkylineSubmoduleDependencies INTERFACE)
 
-set(SPDLOG_USE_STD_FORMAT)
+set(SPDLOG_USE_STD_FORMAT ON)
 add_submodule(
     SkylineSubmoduleDependencies ./submodules/spdlog
     ./submodules/spdlog/include
@@ -31,6 +31,28 @@ add_submodule(
 add_submodule(
     SkylineSubmoduleDependencies ./submodules/vk-bootstrap
     ./submodules/vk-bootstrap/src
+)
+
+add_submodule(
+    SkylineSubmoduleDependencies ./submodules/squirrel
+    ./submodules/squirrel/include
+)
+
+add_submodule(
+    SkylineSubmoduleDependencies ./submodules/freetype
+    ./submodules/freetype/include
+)
+set(FREETYPE_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/lib/freetype.lib")
+
+add_submodule(SkylineSubmoduleDependencies ./submodules/zlib ./submodules/zlib)
+
+add_submodule(
+    SkylineSubmoduleDependencies ./submodules/RmlUi ./submodules/RmlUi/Include
+)
+
+add_submodule(
+    SkylineSubmoduleDependencies ./submodules/StringZilla
+    ./submodules/StringZilla/include
 )
 
 set(SKYLINE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)

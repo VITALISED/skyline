@@ -1,35 +1,54 @@
 #pragma once
 
 #include <toolkit/core/TkCore.h>
-#include <toolkit/system/filesystem/TkFileHandle.h>
+
+enum eTkFileSeek : uint8_t
+{
+    TkFileSeek_Set = SEEK_SET,
+    TkFileSeek_Cur = SEEK_CUR,
+    TkFileSeek_End = SEEK_END
+};
+
+enum eTkFileMode : uint8_t
+{
+    ETkFileMode_Default,
+    ETkFileMode_Read,
+    ETkFileMode_Write,
+    ETkFileMode_Append,
+    ETkFileMode_ReadWrite  = (ETkFileMode_Read << ETkFileMode_Write),
+    ETkFileMode_ReadAppend = (ETkFileMode_Read << ETkFileMode_Append),
+};
+
+using TkRawFile = std::FILE;
 
 class cTkFile
 {
   public:
-    cTkFile(const char *lpacFileName, TkFileID lxFlags, const char *lpacMode)
+    cTkFile(cTkString &lsFilename, eTkFileMode leFileMode) { this->Open(lsFilename, leFileMode); };
+    ~cTkFile() { this->Close(); };
+
+    void Seek(TkSizeType lOffset, eTkFileSeek leFileSeek) { fseek(mFile, lOffset, leFileSeek); }
+
+    TkSizeType Tell() const { return ftell(mFile); }
+
+    TkSizeType Size()
     {
-        this->mxFlags      = lxFlags;
-        this->mpFile       = this->Open();
-        this->mpacFileName = new cTkFixedString<64, char>(lpacFileName);
+        this->Seek(0, TkFileSeek_End);
+        TkSizeType lSize = this->Tell();
+        this->Seek(0, TkFileSeek_Set);
+        return lSize;
     }
 
-    ~cTkFile()
+    TkSizeType Read(void *lpBuffer, TkSizeType lSize, int liNumElements = 1)
     {
-        if (this->mpFile) { this->Close(); }
-
-        delete mpacFileName;
+        return fread(lpBuffer, lSize, liNumElements, mFile);
     }
 
-    TkSTD::File *Open();
-    void Read(void *lpData, TkSizeType liSize, int liCount);
-    void Write(const void *lpData, TkSizeType liSize, int liCount);
-    void Seek(TkSizeType liOffset, int liOrigin) { fseek(this->mpFile, liOffset, liOrigin); }
+    auto operator<=>(const cTkFile &) const = default;
+
+  private:
+    void Open(cTkString &lsFilename, eTkFileMode leFileMode);
     void Close();
 
-    static cTkFileHandle HandleFactory();
-
-    TkSTD::File *mpFile;
-    TkFileID mxFlags;
-    TkSizeType miSize;
-    cTkFixedString<64, char> *mpacFileName;
+    TkRawFile *mFile;
 };

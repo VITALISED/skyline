@@ -7,9 +7,18 @@
 [submodule "submodules/vk-bootstrap"]
 	path = submodules/vk-bootstrap
 	url = https://github.com/charles-lunarg/vk-bootstrap.git
-[submodule "submodules/WAVM"]
-	path = submodules/WAVM
-	url = https://github.com/WAVM/WAVM.git
 [submodule "submodules/RmlUi"]
 	path = submodules/RmlUi
 	url = https://github.com/mikke89/RmlUi.git
+[submodule "submodules/squirrel"]
+	path = submodules/squirrel
+	url = https://github.com/albertodemichelis/squirrel.git
+[submodule "submodules/freetype"]
+	path = submodules/freetype
+	url = https://github.com/freetype/freetype.git
+[submodule "submodules/zlib"]
+	path = submodules/zlib
+	url = https://github.com/madler/zlib.git
+[submodule "submodules/StringZilla"]
+	path = submodules/StringZilla
+	url = https://github.com/ashvardanian/StringZilla.git

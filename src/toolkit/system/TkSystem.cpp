@@ -3,7 +3,7 @@
 void cTkSystem::Construct()
 {
     glfwInit();
-    this->mpFilesystem = new cTkFilesystem();
+    this->mpFilesystem = new cTkFileSystem();
 
     this->muiHeight = 720;
     this->muiWidth  = 1280;
@@ -30,10 +30,4 @@ void cTkSystem::ConstructVideo()
 void cTkSystem::PollForEvents()
 {
     if (!glfwWindowShouldClose(this->mpGLFWWindow)) { glfwPollEvents(); }
-}
-
-void cTkSystem::SetWorkingDirectory(const char *lpacDirectory)
-{
-    TK_INFO(TkSTD::Format("Setting working directory to: {}", lpacDirectory));
-    this->mpFilesystem->SetWorkingDirectory(lpacDirectory);
 }

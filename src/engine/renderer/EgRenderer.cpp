@@ -69,7 +69,7 @@ void cEgRenderer::ConstructDescriptors()
 {
     this->mpDescriptorAllocator = new cEgDescriptorAllocator();
 
-    TkSTD::Vector<cEgDescriptorAllocator::PoolSizeRatio> lPoolSizeRatios = {{VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1.0f}};
+    std::vector<cEgDescriptorAllocator::PoolSizeRatio> lPoolSizeRatios = {{VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1.0f}};
     this->mpDescriptorAllocator->Construct(this->mDevice, 10, lPoolSizeRatios);
 
     cEgDescriptorLayoutBuilder lLayoutBuilder;
@@ -106,9 +106,9 @@ void cEgRenderer::ConstructSwapChain()
 
     this->mSwapChain                       = lSwapChain.swapchain;
     std::vector<VkImage> lImageVec         = lSwapChain.get_images().value();
-    this->mvSwapChainImages                = TkSTD::Vector<VkImage>(lImageVec.begin(), lImageVec.end());
+    this->mvSwapChainImages                = std::vector<VkImage>(lImageVec.begin(), lImageVec.end());
     std::vector<VkImageView> lImageViewVec = lSwapChain.get_image_views().value();
-    this->mvSwapChainImageViews            = TkSTD::Vector<VkImageView>(lImageViewVec.begin(), lImageViewVec.end());
+    this->mvSwapChainImageViews            = std::vector<VkImageView>(lImageViewVec.begin(), lImageViewVec.end());
     this->mSwapChainImageFormat            = lSwapChain.image_format;
 
     VkExtent3D lDrawImageExtent   = {.width = gSystem.muiWidth, .height = gSystem.muiHeight, .depth = 1};
@@ -166,7 +166,7 @@ void cEgRenderer::ConstructFramebuffers()
         cTkVkConstructor<VkFramebufferCreateInfo>::Initialise(this->mRenderPass, this->mSwapchainExtent);
 
     const uint32_t luiSwapChainImageCount = this->mvSwapChainImages.size();
-    this->mvFramebuffers                  = TkSTD::Vector<VkFramebuffer>(luiSwapChainImageCount);
+    this->mvFramebuffers                  = std::vector<VkFramebuffer>(luiSwapChainImageCount);
 
     for (int i = 0; i < luiSwapChainImageCount; i++)
     {

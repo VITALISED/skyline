@@ -1,22 +1,19 @@
 set(TKTOOLKIT_SOURCES
-    core/TkAssert.cpp
-    system/filesystem/TkFile.cpp
-    system/filesystem/TkFilesystem.cpp
-    system/filesystem/TkFileHandle.cpp
-    system/filesystem/TkFileHandleMap.cpp
-    system/timer/TkClock.cpp
+    system/filesystem/TkFile.cpp system/filesystem/TkFileSystem.cpp
+    system/filesystem/TkFileHandle.cpp system/timer/TkClock.cpp
     system/TkSystem.cpp
 )
 
 set(TKTOOLKIT_HEADERS
     core/TkAssert.h
-    core/TkHandle.h
-    core/TkID.h
     core/TkIDMap.h
     core/TkCore.h
     core/TkMacros.h
     core/TkSingleton.h
     core/TkSTD.h
+    core/TkTypes.h
+    core/containers/TkUnorderedMap.h
+    core/containers/TkVector.h
     core/TkString.h
     engine/TkEngineSettings.h
     graphics/vulkan/TkVulkan.h
@@ -25,6 +22,7 @@ set(TKTOOLKIT_HEADERS
     graphics/vulkan/constructors/TkVulkanImageStructures.h
     graphics/vulkan/constructors/TkVulkanConstructors.h
     graphics/vulkan/constructors/TkVulkanCommandStructures.h
+    graphics/vulkan/constructors/TkVulkanPipelineStructures.h
     graphics/vulkan/constructors/TkVulkanRenderPassStructures.h
     graphics/vulkan/constructors/TkVulkanSyncStructures.h
     graphics/vulkan/constructors/TkVkConstructorIncludes.inl
@@ -34,9 +32,10 @@ set(TKTOOLKIT_HEADERS
     maths/numeric/TkVector4.h
     maths/numeric/TkMatrix34.h
     maths/hash/TkHash.h
+    scripts/squirrel/TkSquirrelVM.h
     system/filesystem/TkFile.h
-    system/filesystem/TkFilesystem.h
-    system/filesystem/TkVPAK.h
+    system/filesystem/TkFileHandle.h
+    system/filesystem/TkFileSystem.h
     system/timer/TkClock.h
     system/TkSystem.h
 )
@@ -48,8 +47,14 @@ target_include_directories(TkToolkit PRIVATE ${SKYLINE_SRC_DIR})
 target_precompile_headers(TkToolkit PUBLIC TkPch.h)
 
 target_link_libraries(
-    TkToolkit PUBLIC SkylineSubmoduleDependencies spdlog glfw vk-bootstrap
-                     Vulkan::Vulkan ${Vulkan_LIBRARIES}
+    TkToolkit
+    PUBLIC SkylineSubmoduleDependencies
+           spdlog
+           glfw
+           vk-bootstrap
+           Vulkan::Vulkan
+           ${Vulkan_LIBRARIES}
+           squirrel
 )
 
 if(MSVC)

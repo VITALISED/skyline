@@ -1,28 +1,50 @@
-#include <toolkit/system/filesystem/TkFilesystem.h>
+#include <toolkit/system/filesystem/TkFileSystem.h>
 
-void cTkFilesystem::Construct() {}
-
-void cTkFilesystem::Destruct() {}
-
-cTkFileHandle cTkFilesystem::Open(const char *lpacFilename, const char *lpacMode)
+void cTkFileSystem::Construct()
 {
-    return cTkFileHandle();
+    this->maFileCache       = cTkFileSystem::TkFileCacheMap();
+    this->maFileHandleCache = cTkFileSystem::TkFileHandleMap();
 }
 
-void cTkFilesystem::Close(cTkFile *lpFile) {}
-
-cTkFile *cTkFilesystem::GetFile(const TkFileLookup &lacLookup)
+void cTkFileSystem::Destruct()
 {
-    return TK_NULL;
+    for (auto &lFile : this->maFileCache) { delete lFile.second; }
 }
 
-void cTkFilesystem::SetWorkingDirectory(const char *lpacDirectory)
+cTkFileHandle cTkFileSystem::Open(cTkString &lsFilename, eTkFileMode leFileMode)
 {
+    cTkFile *lFile = new cTkFile(lsFilename, leFileMode);
+
+    TkSizeType liNewLookup    = this->maFileCache.Size() + 1;
+    cTkFileHandle lFileHandle = cTkFileHandle(liNewLookup, leFileMode, false, false, false);
+
+    this->maFileCache.Insert(lFileHandle, lFile);
+    this->maFileHandleCache.Insert(lsFilename, lFileHandle);
+
+    return lFileHandle;
+}
+
+void cTkFileSystem::Close(cTkFileHandle lFileHandle)
+{
+    auto lFile = this->Get(lFileHandle);
+    if (lFile)
+    {
+        this->maFileCache.Remove(lFileHandle);
+
+        cTkString lFileHandleID = this->maFileHandleCache.Find(lFileHandle);
+
+        if (!lFileHandleID.Empty()) this->maFileHandleCache.Remove(lFileHandleID);
+        delete lFile;
+    }
+}
+
+void cTkFileSystem::SetWorkingDirectory(const char *lpacDirectory)
+{
+    TK_DEBUG("Setting working directory to: {}", lpacDirectory);
+
 #ifdef D_MSVC
-    int liResult = _chdir(lpacDirectory);
+    _chdir(lpacDirectory);
 #else
-    int liResult = chdir(lpacDirectory);
+    chdir(lpacDirectory);
 #endif
-
-    TK_ASSERT(liResult == 0, TkSTD::Format("Could not change working directory: {}", strerror(liResult)));
 }

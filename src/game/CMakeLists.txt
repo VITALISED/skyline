@@ -6,9 +6,13 @@ elseif(APPLE)
     set(GCGAME_BUNDLE MACOSX_BUNDLE)
 endif()
 
-set(GCGAME_SOURCES GcMain.cpp application/GcApplication.cpp)
+set(GCGAME_SOURCES GcMain.cpp application/GcApplication.cpp
+                   frontend/GcFrontendManager.cpp scripts/GcScriptManager.cpp
+)
 
-set(GCGAME_HEADERS GcMain.h application/GcApplication.h)
+set(GCGAME_HEADERS GcMain.h application/GcApplication.h
+                   frontend/GcFrontendManager.h scripts/GcScriptManager.h
+)
 
 add_executable(GcGame ${GCGAME_BUNDLE} ${GCGAME_SOURCES} ${GCGAME_HEADERS})
 

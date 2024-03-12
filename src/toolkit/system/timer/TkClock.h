@@ -18,9 +18,9 @@ class cTkClock
 
     inline long double Now()
     {
-        TkSTD::Chrono::time_point lTime                          = TkSTD::Chrono::high_resolution_clock::now();
-        TkSTD::Chrono::high_resolution_clock::duration lDuration = lTime.time_since_epoch();
-        return TkSTD::Chrono::duration<long double>(lDuration).count();
+        std::chrono::time_point lTime                          = std::chrono::high_resolution_clock::now();
+        std::chrono::high_resolution_clock::duration lDuration = lTime.time_since_epoch();
+        return std::chrono::duration<long double>(lDuration).count();
     }
 
     inline bool IsAccumulatorGreaterThanDT() { return this->mfAccumulator >= kfFixedTimeStep; }

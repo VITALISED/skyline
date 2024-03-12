@@ -1,7 +1,7 @@
 #include <engine/renderer/EgDescriptor.h>
 
 void cEgDescriptorAllocator::Construct(
-    VkDevice lDevice, uint32_t luiMaxSets, const TkSTD::Span<PoolSizeRatio> &lPoolSizeRatios)
+    VkDevice lDevice, uint32_t luiMaxSets, const std::span<PoolSizeRatio> &lPoolSizeRatios)
 {
     std::vector<VkDescriptorPoolSize> lPoolSizes;
     for (PoolSizeRatio lRatio : lPoolSizeRatios)

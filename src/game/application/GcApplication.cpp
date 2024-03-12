@@ -11,7 +11,4 @@ void cGcApplication::Destruct()
     delete this->mpClock;
 }
 
-void cGcApplication::Update(float lfTimestep)
-{
-    // TK_INFO(TkSTD::Format("Update call {}", lfTimestep));
-}
+void cGcApplication::Update(float lfTimestep) {}

@@ -106,7 +106,7 @@ class TK_VEC3_ALIGN cTkVector3
     }
 
     // Textual representation
-    friend TkSTD::OStream &operator<<(TkSTD::OStream &os, const cTkVector3 &t);
+    friend std::ostream &operator<<(std::ostream &os, const cTkVector3 &t);
 
     union {
         struct

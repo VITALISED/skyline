@@ -2,8 +2,8 @@
 
 void cGcMain::Construct()
 {
-    TkSTD::String lsApplicationName = "GcGame";
-    TkSTD::String lsEngineName      = "skyline";
+    cTkString lsApplicationName = "GcGame";
+    cTkString lsEngineName      = "skyline";
 
     cTkSystem &gSystem           = cTkSystem::GetInstance();
     cEgEngine &gEngine           = cEgEngine::GetInstance();
@@ -14,7 +14,7 @@ void cGcMain::Construct()
     gSystem.Construct();
 
 #ifdef D_DEBUG
-    gSystem.SetWorkingDirectory(D_WORKING_DIR);
+    gSystem.mpFilesystem->SetWorkingDirectory(D_WORKING_DIR);
 #endif
 
     gEngine.Configure(lSettings);

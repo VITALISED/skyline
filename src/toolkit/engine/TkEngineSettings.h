@@ -6,14 +6,14 @@ class cTkEngineSettings
 {
   public:
     inline cTkEngineSettings(
-        TkSTD::String &lsApplicationName, uint32_t luiApplicationVersion, TkSTD::String &lsEngineName,
+        cTkString &lsApplicationName, uint32_t luiApplicationVersion, cTkString &lsEngineName,
         uint32_t luiEngineVersion)
         : msApplicationName(lsApplicationName), muiApplicationVersion(luiApplicationVersion),
           msEngineName(lsEngineName), muiEngineVersion(luiEngineVersion)
     {}
 
-    TkSTD::String &msApplicationName;
-    TkSTD::String &msEngineName;
+    cTkString &msApplicationName;
+    cTkString &msEngineName;
     uint32_t muiEngineVersion;
     uint32_t muiApplicationVersion;
 };

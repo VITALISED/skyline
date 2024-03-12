@@ -1,18 +1,19 @@
 #pragma once
 
 #include <toolkit/core/TkID.h>
-#include <toolkit/core/TkSTD.h>
-
-#include <unordered_map>
+#include <toolkit/core/containers/TkUnorderedMap.h>
 
 template <typename T>
-class cTkIDMap
+class cTkIDMap : public std::unordered_map<cTkID, T, cTkID::Hash>
 {
   public:
-    void Add(cTkID liID, T lpObject) { mpaMap[liID] = lpObject; }
-    T Get(cTkID liID) { return mpaMap[liID]; }
-    void Remove(cTkID liID) { mpaMap.erase(liID); }
+    cTkIDMap()  = default;
+    ~cTkIDMap() = default;
 
-  private:
-    TkSTD::UnorderedMap<cTkID, T, cTkID::Hash> mpaMap;
+    void Insert(const cTkID &id, const T &value) { (*this)[id] = value; }
+    void Remove(const cTkID &id) { this->erase(id); }
+    bool Contains(const cTkID &id) const { return this->find(id) != this->end(); }
+    T &GetValue(const cTkID &id) { return (*this)[id]; }
+    size_t Size() const { return this->size(); }
+    bool IsEmpty() const { return this->empty(); }
 };

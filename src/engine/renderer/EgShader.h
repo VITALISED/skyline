@@ -9,9 +9,11 @@ class cEgShader
     void Construct(VkDevice lDevice, const char *lpacFilename);
     void Destruct(VkDevice lDevice);
 
-    static cTkFixedString<256, char> &GetPrelude();
+    static cTkString &GetPrelude();
     static void SetPrelude(const char *lpacPrelude);
-    static cTkFixedString<256, char> msPrelude;
+    static cTkString msPrelude;
+
+    bool LoadShaderModule(VkDevice lDevice, const char *lpacFilename);
 
     VkShaderModule mModule;
 };

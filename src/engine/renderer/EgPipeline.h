@@ -1,13 +1,12 @@
 #pragma once
 
 #include <engine/renderer/EgShader.h>
-#include <toolkit/system/TkSystem.h>
 
 class cEgPipeline
 {
   public:
     void Construct();
-    bool LoadShaderModule(const char *lpacFilename);
+    bool Load(VkDevice lDevice, const char *lpacShaderFilename);
 
     VkPipeline mPipeline;
     cEgShader *mpShader;

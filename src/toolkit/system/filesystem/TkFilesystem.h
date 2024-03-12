@@ -2,21 +2,30 @@
 
 #include <toolkit/core/TkCore.h>
 #include <toolkit/system/filesystem/TkFile.h>
-#include <toolkit/system/filesystem/TkFileHandleMap.h>
+#include <toolkit/system/filesystem/TkFileHandle.h>
 
-class cTkFilesystem
+class cTkFileSystem
 {
   public:
+    using TkFileHandleMap = cTkUnorderedMap<cTkString, cTkFileHandle, cTkString::Hash>;
+    using TkFileCacheMap  = cTkUnorderedMap<cTkFileHandle, cTkFile *, cTkHandleHash<cTkFileHandle>>;
+
+    cTkFileSystem() { this->Construct(); };
+    ~cTkFileSystem() { this->Destruct(); };
+
     void Construct();
     void Destruct();
 
-    cTkFileHandle Open(const char *lpacFilename, const char *lpacMode);
-    void Close(cTkFile *lpFile);
-    cTkFileHandle GetFHandle(cTkID lID);
-    cTkFile *GetFile(cTkFileHandle lFileHandle) { return this->GetFile(lFileHandle.mID.muiLookup); }
-    cTkFile *GetFile(const TkFileLookup &lacLookup);
     void SetWorkingDirectory(const char *lpacDirectory);
 
-    cTkFileHandleMap maFiles;
-    cTkIDMap<cTkFileHandle> maCachedFilenames;
+    cTkFileHandle Open(cTkString &lsFilename, eTkFileMode leFileMode);
+    void Close(cTkFileHandle lFileHandle);
+    cTkFileHandle Lookup(const cTkString &lFileHandleID);
+    cTkFile *Get(cTkFileHandle lFileHandle)
+    {
+        if (lFileHandle.IsValid()) return maFileCache[lFileHandle];
+    }
+
+    TkFileHandleMap maFileHandleCache;
+    TkFileCacheMap maFileCache;
 };

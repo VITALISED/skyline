@@ -1,17 +1,13 @@
 #include <engine/renderer/EgPipeline.h>
 
-bool cEgPipeline::LoadShaderModule(const char *lpacFilename)
+void cEgPipeline::Construct()
 {
-    cTkFilesystem *gpFileSystem = cTkSystem::GetInstance().mpFilesystem;
-    cTkFileHandle lFH           = gpFileSystem->Open(lpacFilename, "rb");
+    this->mpShader = new cEgShader();
+}
 
-    // TK_ASSERT(lFH.IsValid(), "Invalid FH");
-
-    TkSTD::Vector<uint32_t> lBuffer;
-    uint32_t luiSize;
-    uint32_t luiCount;
-
-    // TkSTD::SizeType gpFileSystem->Read(lFileHandle, static_cast<void *>(lBuffer.data()), luiSize, luiCount);
+bool cEgPipeline::Load(VkDevice lDevice, const char *lpacShaderFilename)
+{
+    this->mpShader->LoadShaderModule(lDevice, lpacShaderFilename);
 
     return true;
 }

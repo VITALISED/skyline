@@ -1,51 +1,48 @@
 #pragma once
 
-#include <toolkit/core/TkHandle.h>
+#include <toolkit/core/TkCore.h>
+#include <toolkit/maths/hash/TkHash.h>
+#include <toolkit/system/filesystem/TkFile.h>
 
-#define TK_NULLFH cTkFileHandle();
-
-class cTkFile;
-
-typedef uint32_t TkFileLookup;
-
-enum eTkFileMode : uint8_t
-{
-    ETkFileMode_Default,
-    ETkFileMode_Read,
-    ETkFileMode_Write,
-    ETkFileMode_Append,
-    ETkFileMode_ReadWrite  = (ETkFileMode_Read << ETkFileMode_Write),
-    ETkFileMode_ReadAppend = (ETkFileMode_Read << ETkFileMode_Append),
-};
-
-class TkFileID
+class cTkFileHandle
 {
   public:
-    const char *ConvertMode()
+    using InnerType = cTkFile;
+
+    cTkFileHandle() = default;
+    cTkFileHandle(uint64_t muiIncrementor, eTkFileMode leFileMode, bool lbBinary, bool lbPak, bool lbCompressed)
     {
-        switch (this->meFileOpenMode)
-        {
-        case ETkFileMode_Read: return "r";
-        case ETkFileMode_Write: TK_ASSERT(!this->mbPak, "Cannot open pakfile for writing."); return "w+";
-        case ETkFileMode_Append: TK_ASSERT(!this->mbPak, "Cannot open pakfile for writing."); return "a+";
-        case ETkFileMode_ReadWrite: TK_ASSERT(!this->mbPak, "Cannot open pakfile for writing."); return "w+";
-        case ETkFileMode_ReadAppend: TK_ASSERT(!this->mbPak, "Cannot open pakfile for writing."); return "a+";
-        default: return "r";
-        }
+        this->muiHandle    = muiIncrementor;
+        this->mbBinary     = lbBinary;
+        this->mbPak        = lbPak;
+        this->mbCompressed = lbCompressed;
+        this->meFileMode   = leFileMode;
+    }
+    cTkFileHandle(const cTkFileHandle &lFileHandle) { this->muiHandle = lFileHandle.muiHandle; }
+
+    InnerType *Get();
+    bool IsValid() const { return this->muiHandle != 0; }
+
+    InnerType &operator*() { return *this->Get(); }
+    InnerType *operator->() { return this->Get(); }
+    friend auto operator<=>(const cTkFileHandle &, const cTkFileHandle &) = default;
+    friend bool operator==(const cTkFileHandle &lHandle, const cTkFileHandle &lOther)
+    {
+        return lHandle.muiHandle == lOther.muiHandle;
     }
 
+    uint64_t CalculateHash() const { return cTkHash::FNV1A(&muiHandle, sizeof(muiHandle)); }
+
     union {
+        uint64_t muiHandle;
         struct
         {
-            bool mbValid : 1;
-            bool mbPak : 1;
             bool mbBinary : 1;
-            bool __muiReserved : 1;
-            eTkFileMode meFileOpenMode : 4;
-            TkFileLookup muiLookup : 24;
+            bool mbPak : 1;
+            bool mbCompressed : 1;
+            uint32_t _muiReserved : 9;
+            eTkFileMode meFileMode : 4;
+            uint64_t muiIndex : 48;
         };
-        uint32_t muiValue;
     };
 };
-
-typedef cTkHandle<TkFileID, cTkFile> cTkFileHandle;
