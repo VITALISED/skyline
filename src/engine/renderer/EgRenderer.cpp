@@ -31,14 +31,22 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
         VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME};
 
     vkb::PhysicalDeviceSelector lDeviceSelector(lInstance);
+
+    VkPhysicalDeviceVulkan13Features lDeviceFeatures13 = {};
+    lDeviceFeatures13.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+    lDeviceFeatures13.synchronization2                 = VK_TRUE;
+
+    VkPhysicalDeviceVulkan12Features lDeviceFeatures12 = {};
+    lDeviceFeatures12.sType                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+    lDeviceFeatures12.bufferDeviceAddress              = VK_TRUE;
+
     vkb::PhysicalDevice lPhysicalDevice = lDeviceSelector.set_minimum_version(1, 3)
                                               .add_required_extensions(lDeviceExts)
                                               .set_surface(this->mSurfaceKHR)
-                                              .set_required_features_13({.synchronization2 = VK_TRUE})
-                                              .set_required_features_12({.bufferDeviceAddress = VK_TRUE})
+                                              .set_required_features_13(lDeviceFeatures13)
+                                              .set_required_features_12(lDeviceFeatures12)
                                               .select()
                                               .value();
-
     vkb::DeviceBuilder lDeviceBuilder(lPhysicalDevice);
 
     vkb::Device lDevice = lDeviceBuilder.build().value();
