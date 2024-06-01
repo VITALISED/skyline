@@ -63,6 +63,14 @@ void cEgRenderer::Construct(cTkEngineSettings &lSettings)
     this->ConstructSyncStructures();
     this->ConstructCommandBuffers();
     this->ConstructDescriptors();
+    this->ConstructPipelines();
+}
+
+void cEgRenderer::ConstructPipelines()
+{
+    this->mPipeline = cEgPipeline();
+
+    this->mPipeline.Construct();
 }
 
 void cEgRenderer::ConstructDescriptors()

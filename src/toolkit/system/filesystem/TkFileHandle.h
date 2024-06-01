@@ -10,9 +10,9 @@ class cTkFileHandle
     using InnerType = cTkFile;
 
     cTkFileHandle() = default;
-    cTkFileHandle(uint64_t muiIncrementor, eTkFileMode leFileMode, bool lbBinary, bool lbPak, bool lbCompressed)
+    cTkFileHandle(uint32_t muiIncrementor, eTkFileMode leFileMode, bool lbBinary, bool lbPak, bool lbCompressed)
     {
-        this->muiHandle    = muiIncrementor;
+        this->muiIndex     = muiIncrementor;
         this->mbBinary     = lbBinary;
         this->mbPak        = lbPak;
         this->mbCompressed = lbCompressed;
@@ -22,14 +22,22 @@ class cTkFileHandle
 
     InnerType *Get();
     bool IsValid() const { return this->muiHandle != 0; }
+    void Invalidate() { this->muiHandle = 0; }
 
     InnerType &operator*() { return *this->Get(); }
     InnerType *operator->() { return this->Get(); }
-    friend auto operator<=>(const cTkFileHandle &, const cTkFileHandle &) = default;
+
+    friend bool operator!=(const cTkFileHandle &lHandle, const cTkFileHandle &lOther)
+    {
+        return lHandle.muiHandle != lOther.muiHandle;
+    }
+
     friend bool operator==(const cTkFileHandle &lHandle, const cTkFileHandle &lOther)
     {
         return lHandle.muiHandle == lOther.muiHandle;
     }
+
+    auto operator<=>(const cTkFileHandle &) const = default;
 
     uint64_t CalculateHash() const { return cTkHash::FNV1A(&muiHandle, sizeof(muiHandle)); }
 
@@ -40,9 +48,9 @@ class cTkFileHandle
             bool mbBinary : 1;
             bool mbPak : 1;
             bool mbCompressed : 1;
-            uint32_t _muiReserved : 9;
+            uint32_t _muiReserved : 29;
             eTkFileMode meFileMode : 4;
-            uint64_t muiIndex : 48;
+            uint32_t muiIndex : 32;
         };
     };
 };

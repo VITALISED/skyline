@@ -5,8 +5,8 @@
 
 enum eProcessExit
 {
-    eProcessExit_Success = 0,
-    eProcessExit_Failure = 1,
+    EProcessExit_Success = 0,
+    EProcessExit_Failure = 1,
 };
 
 class cGcMain
@@ -14,5 +14,5 @@ class cGcMain
   public:
     static void Construct();
     static void Destruct();
-    static int Main();
+    static eProcessExit Main();
 };

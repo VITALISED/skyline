@@ -5,6 +5,8 @@ void cGcMain::Construct()
     cTkString lsApplicationName = "GcGame";
     cTkString lsEngineName      = "skyline";
 
+    cTkAssert::Setup();
+
     cTkSystem &gSystem           = cTkSystem::GetInstance();
     cEgEngine &gEngine           = cEgEngine::GetInstance();
     cGcApplication &gApplication = cGcApplication::GetInstance();
@@ -23,10 +25,8 @@ void cGcMain::Construct()
     TK_INFO("Constructed Application Components");
 }
 
-int cGcMain::Main()
+eProcessExit cGcMain::Main()
 {
-    TK_INFO("Starting Game Process!");
-
     cTkSystem &gSystem           = cTkSystem::GetInstance();
     cEgEngine &gEngine           = cEgEngine::GetInstance();
     cGcApplication &gApplication = cGcApplication::GetInstance();
@@ -51,7 +51,7 @@ int cGcMain::Main()
 
     cGcMain::Destruct();
 
-    return eProcessExit_Success;
+    return EProcessExit_Success;
 }
 
 void cGcMain::Destruct()
@@ -71,22 +71,22 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     AllocConsole();
     SetConsoleTitle("GcGame");
     freopen("CONOUT$", "wt", stdout);
-#endif
+#endif // D_DEBUG
 
     int liResult = cGcMain::Main();
 
 #ifdef D_DEBUG
     FreeConsole();
-#endif
+#endif // D_DEBUG
 
     return liResult;
 }
 
-#else
+#else // !D_MSVC
 
 int main(int argc, char *argv[])
 {
     return cGcMain::Main();
 }
 
-#endif
+#endif // D_MSVC

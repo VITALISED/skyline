@@ -7,8 +7,10 @@ class cEgPipeline
   public:
     void Construct();
     bool Load(VkDevice lDevice, const char *lpacShaderFilename);
+    void LoadBackgroundPipelines();
 
     VkPipeline mPipeline;
-    cEgShader *mpShader;
     VkPipelineLayout mPipelineLayout;
+
+    cEgShader *mpShader;
 };

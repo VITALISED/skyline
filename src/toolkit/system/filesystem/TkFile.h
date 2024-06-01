@@ -4,9 +4,9 @@
 
 enum eTkFileSeek : uint8_t
 {
-    TkFileSeek_Set = SEEK_SET,
-    TkFileSeek_Cur = SEEK_CUR,
-    TkFileSeek_End = SEEK_END
+    ETkFileSeek_Set = SEEK_SET,
+    ETkFileSeek_Cur = SEEK_CUR,
+    ETkFileSeek_End = SEEK_END
 };
 
 enum eTkFileMode : uint8_t
@@ -15,8 +15,9 @@ enum eTkFileMode : uint8_t
     ETkFileMode_Read,
     ETkFileMode_Write,
     ETkFileMode_Append,
-    ETkFileMode_ReadWrite  = (ETkFileMode_Read << ETkFileMode_Write),
-    ETkFileMode_ReadAppend = (ETkFileMode_Read << ETkFileMode_Append),
+    ETkFileMode_ReadExt,
+    ETkFileMode_AppendExt,
+    ETkFileMode_WriteExt,
 };
 
 using TkRawFile = std::FILE;
@@ -24,31 +25,57 @@ using TkRawFile = std::FILE;
 class cTkFile
 {
   public:
-    cTkFile(cTkString &lsFilename, eTkFileMode leFileMode) { this->Open(lsFilename, leFileMode); };
+    cTkFile(const cTkString &lsFilename, eTkFileMode leFileMode) { this->Open(lsFilename, leFileMode); };
     ~cTkFile() { this->Close(); };
 
-    void Seek(TkSizeType lOffset, eTkFileSeek leFileSeek) { fseek(mFile, lOffset, leFileSeek); }
+    void Seek(TkSizeType lOffset, eTkFileSeek leFileSeek) { fseek(mpFile, lOffset, leFileSeek); }
 
-    TkSizeType Tell() const { return ftell(mFile); }
+    TkSizeType Tell() const { return ftell(mpFile); }
 
     TkSizeType Size()
     {
-        this->Seek(0, TkFileSeek_End);
+        TkSizeType lCurrentPos = this->Tell();
+        this->Seek(0, ETkFileSeek_End);
         TkSizeType lSize = this->Tell();
-        this->Seek(0, TkFileSeek_Set);
+        this->Seek(lCurrentPos, ETkFileSeek_Set);
         return lSize;
     }
 
-    TkSizeType Read(void *lpBuffer, TkSizeType lSize, int liNumElements = 1)
+    TkSizeType Read(void *lpBuffer, TkSizeType lSize, int liNumElements)
     {
-        return fread(lpBuffer, lSize, liNumElements, mFile);
+        return fread(lpBuffer, lSize, liNumElements, mpFile);
     }
+
+    static bool Exists(const cTkString &lsFilename)
+    {
+        return std::filesystem::exists(std::filesystem::path(lsFilename.c_str()));
+    }
+
+    cTkString ReadText(TkSizeType liLength);
 
     auto operator<=>(const cTkFile &) const = default;
 
   private:
-    void Open(cTkString &lsFilename, eTkFileMode leFileMode);
+    void Open(const cTkString &lsFilename, eTkFileMode leFileMode);
     void Close();
+    static const cTkString ConvertMode(eTkFileMode leFileMode)
+    {
+        cTkString lsBuiltFileMode;
 
-    TkRawFile *mFile;
+        switch (leFileMode)
+        {
+        case ETkFileMode_Read: lsBuiltFileMode = "r"; break;
+        case ETkFileMode_Write: lsBuiltFileMode = "w"; break;
+        case ETkFileMode_Append: lsBuiltFileMode = "a"; break;
+        case ETkFileMode_ReadExt: lsBuiltFileMode = "r+"; break;
+        case ETkFileMode_AppendExt: lsBuiltFileMode = "a+"; break;
+        case ETkFileMode_WriteExt: lsBuiltFileMode = "w+"; break;
+        case ETkFileMode_Default:
+        default: lsBuiltFileMode = "r"; break;
+        }
+
+        return lsBuiltFileMode;
+    }
+
+    TkRawFile *mpFile;
 };

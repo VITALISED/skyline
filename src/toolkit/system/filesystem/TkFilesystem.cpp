@@ -11,7 +11,7 @@ void cTkFileSystem::Destruct()
     for (auto &lFile : this->maFileCache) { delete lFile.second; }
 }
 
-cTkFileHandle cTkFileSystem::Open(cTkString &lsFilename, eTkFileMode leFileMode)
+cTkFileHandle cTkFileSystem::Open(const cTkString &lsFilename, eTkFileMode leFileMode)
 {
     cTkFile *lFile = new cTkFile(lsFilename, leFileMode);
 
@@ -21,20 +21,27 @@ cTkFileHandle cTkFileSystem::Open(cTkString &lsFilename, eTkFileMode leFileMode)
     this->maFileCache.Insert(lFileHandle, lFile);
     this->maFileHandleCache.Insert(lsFilename, lFileHandle);
 
+    TK_INFO("New FH created: {} for file: {}", lFileHandle.muiIndex, lsFilename);
+
     return lFileHandle;
 }
 
 void cTkFileSystem::Close(cTkFileHandle lFileHandle)
 {
-    auto lFile = this->Get(lFileHandle);
+    cTkFile *lFile = this->Get(lFileHandle);
     if (lFile)
     {
         this->maFileCache.Remove(lFileHandle);
 
-        cTkString lFileHandleID = this->maFileHandleCache.Find(lFileHandle);
+        TkOptional<cTkString> lMapLookup = this->maFileHandleCache.Find(lFileHandle);
+        bool lbFound                     = lMapLookup.HasValue();
 
-        if (!lFileHandleID.Empty()) this->maFileHandleCache.Remove(lFileHandleID);
+        TK_ASSERT(lbFound, "File handle not found in cache: {}", lFileHandle.muiHandle);
+
+        if (lbFound) this->maFileHandleCache.Remove(lMapLookup.Value());
+
         delete lFile;
+        lFileHandle.Invalidate();
     }
 }
 

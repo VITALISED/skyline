@@ -18,12 +18,14 @@ class cTkFileSystem
 
     void SetWorkingDirectory(const char *lpacDirectory);
 
-    cTkFileHandle Open(cTkString &lsFilename, eTkFileMode leFileMode);
+    cTkFileHandle Open(const cTkString &lsFilename, eTkFileMode leFileMode);
     void Close(cTkFileHandle lFileHandle);
     cTkFileHandle Lookup(const cTkString &lFileHandleID);
     cTkFile *Get(cTkFileHandle lFileHandle)
     {
         if (lFileHandle.IsValid()) return maFileCache[lFileHandle];
+
+        return TK_NULL;
     }
 
     TkFileHandleMap maFileHandleCache;

@@ -12,9 +12,17 @@ set(TKTOOLKIT_HEADERS
     core/TkSingleton.h
     core/TkSTD.h
     core/TkTypes.h
+    core/TkString.h
     core/containers/TkUnorderedMap.h
     core/containers/TkVector.h
-    core/TkString.h
+    console/TkConsole.h
+    console/TkConObject.h
+    console/TkConCommand.h
+    console/TkConCommand.cpp
+    console/TkConManager.h
+    console/TkConManager.cpp
+    console/TkConVar.h
+    console/TkConVar.cpp
     engine/TkEngineSettings.h
     graphics/vulkan/TkVulkan.h
     graphics/vulkan/vk_mem_alloc.h
@@ -59,6 +67,7 @@ target_link_libraries(
 
 if(MSVC)
     target_compile_definitions(TkToolkit PUBLIC D_MSVC=1)
+    target_compile_options(TkToolkit PUBLIC /wd4068 /Zc:__cplusplus)
 else(MINGW)
     target_compile_definitions(TkToolkit PUBLIC D_MINGW=1)
 endif()

@@ -26,12 +26,18 @@ class cTkUnorderedMap : public std::unordered_map<Key, T, Hash, KeyEqual, Alloca
     void Insert(const Key &lKey, const T &lValue) { this->insert(std::make_pair(lKey, lValue)); }
     void Remove(const Key &lKey) { this->erase(lKey); }
     TkSizeType Size() const { return this->size(); }
-    const Key &Find(const T &lValue)
+    TkOptional<Key> Find(const T &lValue)
     {
+        TkOptional<Key> lKey = TkOptional<Key>();
         for (auto &lPair : *this)
         {
-            if (lPair.second == lValue) { return lPair.first; }
+            if (lPair.second == lValue)
+            {
+                lKey = lPair.first;
+                break;
+            }
         }
-        return TK_NULL;
+
+        return lKey;
     }
 };

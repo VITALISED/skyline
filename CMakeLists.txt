@@ -6,9 +6,6 @@ project(
     VERSION 0.0.1
 )
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 include(AddSubmodule)
@@ -56,6 +53,9 @@ add_submodule(
 )
 
 set(SKYLINE_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(src/toolkit)
 add_subdirectory(src/engine)

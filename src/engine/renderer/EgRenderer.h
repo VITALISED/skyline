@@ -2,6 +2,7 @@
 
 #include <engine/renderer/EgDeletionQueue.h>
 #include <engine/renderer/EgDescriptor.h>
+#include <engine/renderer/EgPipeline.h>
 #include <toolkit/engine/TkEngineSettings.h>
 #include <toolkit/graphics/vulkan/TkVulkan.h>
 #include <toolkit/system/TkSystem.h>
@@ -18,6 +19,7 @@ class cEgRenderer
     void ConstructCommandBuffers();
     void ConstructSyncStructures();
     void ConstructDescriptors();
+    void ConstructPipelines();
 
     void Destruct();
 
@@ -62,6 +64,8 @@ class cEgRenderer
     std::vector<VkImageView> mvSwapChainImageViews;
 
     cEgDeletionQueue mPrimaryDeletionQueue;
+
+    cEgPipeline mPipeline;
 
     uint32_t muiFrameNum = NULL;
 };
