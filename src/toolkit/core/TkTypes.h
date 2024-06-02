@@ -17,8 +17,6 @@ using u64 = uint64_t;
 using f32 = float;
 using f64 = double;
 
-constexpr int guh = sizeof(double);
-
 template <typename T>
 class TkOptional
 {

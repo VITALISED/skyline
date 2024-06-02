@@ -19,3 +19,5 @@
 #define TK_NULL 0
 
 #define TK_STRINGIFY(x) #x
+
+#define TK_NODEFAULT TK_ERROR("Hit end of switch in ", __FUNCTION__)

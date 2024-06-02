@@ -11,8 +11,9 @@ set(TKTOOLKIT_HEADERS
     core/TkMacros.h
     core/TkSingleton.h
     core/TkSTD.h
-    core/TkTypes.h
     core/TkString.h
+    core/TkTraits.h
+    core/TkTypes.h
     core/containers/TkUnorderedMap.h
     core/containers/TkVector.h
     console/TkConsole.h
@@ -22,7 +23,6 @@ set(TKTOOLKIT_HEADERS
     console/TkConManager.h
     console/TkConManager.cpp
     console/TkConVar.h
-    console/TkConVar.cpp
     engine/TkEngineSettings.h
     graphics/vulkan/TkVulkan.h
     graphics/vulkan/vk_mem_alloc.h
