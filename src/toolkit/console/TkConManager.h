@@ -12,7 +12,7 @@ class cTkConManager : public cTkSingleton<cTkConManager>
     template <typename T>
     cTkConVar<T> *FindCVar(cTkString lsName)
     {
-        for (cTkConObject *lpObj : *g_ConVarList)
+        for (cTkConObject *lpObj : *gConVarList)
         {
             if (lpObj->GetType() == eTkConObjectType::ETkConObjectType_ConVar && lpObj->GetName() == lsName)
             {
@@ -24,11 +24,15 @@ class cTkConManager : public cTkSingleton<cTkConManager>
         return TK_NULL;
     }
 
+  private:
     template <typename T>
     void AddCVar(cTkConVar<T> *lpObj)
     {
         TK_ASSERT(lpObj != TK_NULL && lpObj->GetType() == eTkConObjectType::ETkConObjectType_ConVar);
 
-        g_ConVarList->insert(lpObj);
+        gConVarList->insert(lpObj);
     }
+
+    template <TkFundamental T>
+    friend class cTkConVar;
 };

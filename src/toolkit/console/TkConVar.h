@@ -2,7 +2,9 @@
 
 #include <toolkit/console/TkConObject.h>
 
-extern cTkVector<cTkConObject *> *g_ConVarList;
+extern cTkVector<cTkConObject *> *gConVarList;
+
+class cTkConManager;
 
 template <TkFundamental T>
 class cTkConVar : public cTkConObject
@@ -14,7 +16,9 @@ class cTkConVar : public cTkConObject
     explicit cTkConVar(cTkString lsName, cTkString lsDescription, eTkConFlags lxFlags)
         : cTkConObject(lsName, lsDescription, lxFlags), mValue()
     {
-        g_ConVarList->push_back(this);
+        cTkConManager gConManager = cTkConManager::GetInstance();
+
+        gConManager.AddCVar(this);
     }
 
     virtual cTkString &PrintInfo() final { cTkAssert::Info("ConVar "_sz + this->GetName()); }
