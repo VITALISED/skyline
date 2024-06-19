@@ -1,19 +1,39 @@
 #pragma once
 
+#include <toolkit/core/TkCore.h>
+#include <toolkit/core/string/TkString.h>
+
 #define FNV_PRIME  0x100000001b3
-#define FNV_OFFSET 0xcbf29ce484222325
+#define FNV_OFFEST 0xcbf29ce484222325
 
 class cTkHash
 {
   public:
-    static u64 FNV1A(const void *lpData, u64 luiSize)
+    template <typename T>
+    constexpr static TkSizeType FNV1A(const T &lData) noexcept
     {
-        u64 lHash = FNV_OFFSET;
-        for (u64 i = 0; i < luiSize; i++)
+        TK_STATIC_ASSERT(TkIsSameV<T, cTkStringView> || TkIsIntegralV<T>);
+
+        TkSizeType result = FNV_OFFEST;
+
+        if constexpr (TkIsIntegralV<T>)
         {
-            lHash ^= static_cast<const u8 *>(lpData)[i];
-            lHash *= FNV_PRIME;
+            const u8 *lPtr = reinterpret_cast<const u8 *>(&lData);
+            for (TkSizeType i = 0; i < sizeof(T); ++i)
+            {
+                result ^= static_cast<u64>(lPtr[i]);
+                result *= FNV_PRIME;
+            }
+            return result;
         }
-        return lHash;
+        else if constexpr (TkIsSameV<T, cTkStringView>)
+        {
+            for (char lChar : lData)
+            {
+                result ^= static_cast<u64>(lChar);
+                result *= FNV_PRIME;
+            }
+            return result;
+        }
     }
 };

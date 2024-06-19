@@ -8,14 +8,16 @@ set(TKTOOLKIT_HEADERS
     core/TkAssert.h
     core/TkIDMap.h
     core/TkCore.h
+    core/TkHandle.h
     core/TkMacros.h
     core/TkSingleton.h
-    core/TkSTD.h
-    core/TkString.h
     core/TkTraits.h
     core/TkTypes.h
-    core/containers/TkUnorderedMap.h
-    core/containers/TkVector.h
+    core/string/TkBasicString.h
+    core/string/TkString.h
+    containers/TkUnorderedDense.h
+    containers/TkUnorderedMap.h
+    containers/TkVector.h
     console/TkConsole.h
     console/TkConObject.h
     console/TkConCommand.h
@@ -23,7 +25,7 @@ set(TKTOOLKIT_HEADERS
     console/TkConManager.h
     console/TkConManager.cpp
     console/TkConVar.h
-    engine/TkEngineSettings.h
+    console/TkConVar.cpp
     graphics/vulkan/TkVulkan.h
     graphics/vulkan/vk_mem_alloc.h
     graphics/vulkan/constructors/TkVmaStructures.h
@@ -40,6 +42,9 @@ set(TKTOOLKIT_HEADERS
     maths/numeric/TkVector4.h
     maths/numeric/TkMatrix34.h
     maths/hash/TkHash.h
+    memory/TkAlignedMemory.h
+    memory/allocators/TkSTLAllocator.h
+    memory/allocators/TkStackAllocator.h
     scripts/squirrel/TkSquirrelVM.h
     system/filesystem/TkFile.h
     system/filesystem/TkFileHandle.h
@@ -67,7 +72,9 @@ target_link_libraries(
 
 if(MSVC)
     target_compile_definitions(TkToolkit PUBLIC D_MSVC=1)
-    target_compile_options(TkToolkit PUBLIC /wd4068 /Zc:__cplusplus)
+    target_compile_options(
+        TkToolkit PUBLIC /wd4068 /Zc:__cplusplus /std:c++latest
+    )
 else(MINGW)
     target_compile_definitions(TkToolkit PUBLIC D_MINGW=1)
 endif()

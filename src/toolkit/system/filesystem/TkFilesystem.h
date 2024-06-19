@@ -1,5 +1,6 @@
 #pragma once
 
+#include <toolkit/containers/TkUnorderedMap.h>
 #include <toolkit/core/TkCore.h>
 #include <toolkit/system/filesystem/TkFile.h>
 #include <toolkit/system/filesystem/TkFileHandle.h>
@@ -7,8 +8,8 @@
 class cTkFileSystem
 {
   public:
-    using TkFileHandleMap = cTkUnorderedMap<cTkString, cTkFileHandle, cTkString::Hash>;
-    using TkFileCacheMap  = cTkUnorderedMap<cTkFileHandle, cTkFile *, cTkHandleHash<cTkFileHandle>>;
+    using TkFileHandleMap = cTkUnorderedMap<cTkString, cTkFileHandle>;
+    using TkFileCacheMap  = cTkUnorderedMap<cTkFileHandle, cTkFile *>;
 
     cTkFileSystem() { this->Construct(); };
     ~cTkFileSystem() { this->Destruct(); };
@@ -19,7 +20,7 @@ class cTkFileSystem
     void SetWorkingDirectory(const char *lpacDirectory);
 
     cTkFileHandle Open(const cTkString &lsFilename, eTkFileMode leFileMode);
-    void Close(cTkFileHandle lFileHandle);
+    void Close(cTkFileHandle &lFileHandle);
     cTkFileHandle Lookup(const cTkString &lFileHandleID);
     cTkFile *Get(cTkFileHandle lFileHandle)
     {

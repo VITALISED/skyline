@@ -1,7 +1,5 @@
 #pragma once
 
-#include <toolkit/core/TkSTD.h>
-
 template <typename T>
 class cTkSingleton
 {
@@ -23,7 +21,7 @@ class cTkSingleton
     }
 
   protected:
-    inline cTkSingleton(){};
+    cTkSingleton()                     = default;
     cTkSingleton(const cTkSingleton &) = delete;
 
   private:

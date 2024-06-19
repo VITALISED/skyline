@@ -7,19 +7,18 @@ void cGcMain::Construct()
 
     cTkAssert::Setup();
 
-    cTkSystem &gSystem           = cTkSystem::GetInstance();
-    cEgEngine &gEngine           = cEgEngine::GetInstance();
-    cGcApplication &gApplication = cGcApplication::GetInstance();
+    cTkSystem &gSystem                 = cTkSystem::GetInstance();
+    cEgEngine &gEngine                 = cEgEngine::GetInstance();
+    cGcApplication &gApplication       = cGcApplication::GetInstance();
+    cTkConVar<float> gc_engine_version = cTkConVar<float>("gc_engine_version", "test cvar", 1.0, ETkConFlags_None);
 
-    cTkEngineSettings lSettings = cTkEngineSettings(
-        lsApplicationName, VK_MAKE_API_VERSION(0, 1, 0, 0), lsEngineName, VK_MAKE_API_VERSION(0, 1, 0, 0));
     gSystem.Construct();
 
 #ifdef D_DEBUG
     gSystem.mpFilesystem->SetWorkingDirectory(D_WORKING_DIR);
 #endif
 
-    gEngine.Configure(lSettings);
+    gEngine.Configure();
     gApplication.Construct();
 
     TK_INFO("Constructed Application Components");

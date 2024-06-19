@@ -1,13 +1,11 @@
 #include <toolkit/console/TkConManager.h>
 
-cTkVector<cTkConObject *> *gConVarList;
-
 cTkConManager::cTkConManager()
 {
-    gConVarList = new cTkVector<cTkConObject *>();
+    this->mvCvarList = cTkVector<cTkConObject *>();
 }
 
 cTkConManager::~cTkConManager()
 {
-    for (cTkConObject *lConObj : *gConVarList) { delete lConObj; }
+    for (cTkConObject *lConObj : this->mvCvarList) { delete lConObj; }
 }

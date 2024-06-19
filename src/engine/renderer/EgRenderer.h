@@ -3,16 +3,15 @@
 #include <engine/renderer/EgDeletionQueue.h>
 #include <engine/renderer/EgDescriptor.h>
 #include <engine/renderer/EgPipeline.h>
-#include <toolkit/engine/TkEngineSettings.h>
 #include <toolkit/graphics/vulkan/TkVulkan.h>
 #include <toolkit/system/TkSystem.h>
 
 class cEgRenderer
 {
   public:
-    inline cEgRenderer(cTkEngineSettings &lSettings) { this->Construct(lSettings); }
+    cEgRenderer() { this->Construct(); }
 
-    void Construct(cTkEngineSettings &lSettings);
+    void Construct();
     void ConstructSwapChain();
     void ConstructRenderpass();
     void ConstructFramebuffers();

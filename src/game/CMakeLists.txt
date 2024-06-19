@@ -22,6 +22,13 @@ target_compile_definitions(
     GcGame PRIVATE -DD_WORKING_DIR="${PROJECT_SOURCE_DIR}/"
 )
 
+if(MSVC)
+    target_compile_definitions(GcGame PUBLIC D_MSVC=1)
+    target_compile_options(GcGame PUBLIC /wd4068 /Zc:__cplusplus /std:c++latest)
+else(MINGW)
+    target_compile_definitions(GcGame PUBLIC D_MINGW=1)
+endif()
+
 target_link_libraries(GcGame PRIVATE EgEngine TkToolkit)
 
 target_precompile_headers(GcGame PRIVATE GcPch.h)

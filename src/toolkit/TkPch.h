@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 
+#include <compare>
 #include <deque>
 #include <filesystem>
 #include <fstream>

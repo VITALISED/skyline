@@ -21,24 +21,18 @@ cTkFileHandle cTkFileSystem::Open(const cTkString &lsFilename, eTkFileMode leFil
     this->maFileCache.Insert(lFileHandle, lFile);
     this->maFileHandleCache.Insert(lsFilename, lFileHandle);
 
-    TK_INFO("New FH created: {} for file: {}", lFileHandle.muiIndex, lsFilename);
+    TK_DEBUG("New FH created: {} for file: {}", lFileHandle.Value(), lsFilename);
 
     return lFileHandle;
 }
 
-void cTkFileSystem::Close(cTkFileHandle lFileHandle)
+void cTkFileSystem::Close(cTkFileHandle &lFileHandle)
 {
     cTkFile *lFile = this->Get(lFileHandle);
     if (lFile)
     {
         this->maFileCache.Remove(lFileHandle);
-
-        TkOptional<cTkString> lMapLookup = this->maFileHandleCache.Find(lFileHandle);
-        bool lbFound                     = lMapLookup.HasValue();
-
-        TK_ASSERT(lbFound, "File handle not found in cache: {}", lFileHandle.muiHandle);
-
-        if (lbFound) this->maFileHandleCache.Remove(lMapLookup.Value());
+        this->maFileHandleCache.Remove(lFile->GetName());
 
         delete lFile;
         lFileHandle.Invalidate();

@@ -4,14 +4,14 @@
 
 #include <string>
 
-enum class eTkConFlags : u32
+enum eTkConFlags : u32
 {
     ETkConFlags_None      = (1 << 0),
     ETkConFlags_Developer = (1 << 1),
     ETkConFlags_ReadOnly  = (1 << 2), // only for cvars
 };
 
-enum class eTkConObjectType : u8
+enum eTkConObjectType : u8
 {
     ETkConObjectType_None,
     ETkConObjectType_ConVar,
@@ -25,11 +25,11 @@ class cTkConObject
     explicit cTkConObject(cTkString lsName, cTkString lsDescription, eTkConFlags lxFlags)
         : msName(lsName), msDescription(lsDescription), mxFlags(lxFlags)
     {}
+
     virtual ~cTkConObject() = default;
 
-    virtual cTkString &PrintInfo()       = 0;
-    virtual eTkConObjectType GetType()   = 0;
-    virtual const char *GetInnerTypeID() = 0;
+    virtual void PrintInfo()                 = 0;
+    virtual eTkConObjectType GetObjectType() = 0;
 
     cTkString &GetName() { return this->msName; }
     cTkString &GetDescription() { return this->msDescription; }

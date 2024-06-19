@@ -25,8 +25,9 @@ using TkRawFile = std::FILE;
 class cTkFile
 {
   public:
-    cTkFile(const cTkString &lsFilename, eTkFileMode leFileMode) { this->Open(lsFilename, leFileMode); };
+    cTkFile() = delete;
     ~cTkFile() { this->Close(); };
+    explicit cTkFile(const cTkString &lsFilename, eTkFileMode leFileMode) { this->Open(lsFilename, leFileMode); };
 
     void Seek(TkSizeType lOffset, eTkFileSeek leFileSeek) { fseek(mpFile, lOffset, leFileSeek); }
 
@@ -53,7 +54,9 @@ class cTkFile
 
     cTkString ReadText(TkSizeType liLength);
 
-    auto operator<=>(const cTkFile &) const = default;
+    cTkString &GetName() { return this->msFileName; }
+
+    TkStrongOrdering operator<=>(const cTkFile &) const = default;
 
   private:
     void Open(const cTkString &lsFilename, eTkFileMode leFileMode);
@@ -78,4 +81,6 @@ class cTkFile
     }
 
     TkRawFile *mpFile;
+    cTkString msFileName;
+    eTkFileMode meFileOpenMode;
 };

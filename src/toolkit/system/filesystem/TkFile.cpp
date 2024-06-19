@@ -2,23 +2,25 @@
 
 void cTkFile::Open(const cTkString &lsFilename, eTkFileMode leFileMode)
 {
-    bool lbExists = cTkFile::Exists(lsFilename);
+    this->msFileName = lsFilename;
 
-    TK_ASSERT(lbExists, "File does not exist, or might be a directory: {}", lsFilename);
+    bool lbExists = cTkFile::Exists(this->msFileName);
+
+    TK_ASSERT(lbExists, "File does not exist, or might be a directory: {}", this->msFileName);
 
     if (lbExists)
     {
         const cTkString lsBuiltFileMode = cTkFile::ConvertMode(leFileMode);
 
-        this->mpFile = fopen(lsFilename.c_str(), lsBuiltFileMode.c_str());
+        this->mpFile = fopen(this->msFileName.c_str(), lsBuiltFileMode.c_str());
 
-        TK_INFO("Opened file: {} which was 0x{:X} bytes", lsFilename, this->Size());
+        TK_DEBUG("Opened file: {} which was 0x{:X} bytes", this->msFileName, this->Size());
     }
 }
 
 void cTkFile::Close()
 {
-    if (this->mpFile) { fclose(this->mpFile); }
+    if (this->mpFile) fclose(this->mpFile);
 }
 
 cTkString cTkFile::ReadText(TkSizeType liLength)

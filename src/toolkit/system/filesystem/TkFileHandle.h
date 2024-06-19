@@ -4,7 +4,7 @@
 #include <toolkit/maths/hash/TkHash.h>
 #include <toolkit/system/filesystem/TkFile.h>
 
-class cTkFileHandle
+class cTkFileHandle : public ITkHandle<cTkFile>
 {
   public:
     using InnerType = cTkFile;
@@ -20,37 +20,33 @@ class cTkFileHandle
     }
     cTkFileHandle(const cTkFileHandle &lFileHandle) { this->muiHandle = lFileHandle.muiHandle; }
 
-    InnerType *Get();
-    bool IsValid() const { return this->muiHandle != 0; }
-    void Invalidate() { this->muiHandle = 0; }
+    virtual InnerType *Get() final;
+    virtual u64 Value() final { return this->muiHandle; };
+    virtual bool IsValid() const final { return this->muiHandle != TK_NULL; };
+    virtual void Invalidate() final { this->muiHandle = TK_NULL; };
+    virtual TkSizeType Hash() const final { return cTkHash::FNV1A(this->muiHandle); };
 
-    InnerType &operator*() { return *this->Get(); }
-    InnerType *operator->() { return this->Get(); }
+    bool IsBinary() { return this->mbBinary; }
+    bool IsPak() { return this->mbPak; }
+    u32 GetIncrementor() { return this->muiIndex; }
+    eTkFileMode GetFileMode() { return this->meFileMode; }
 
-    friend bool operator!=(const cTkFileHandle &lHandle, const cTkFileHandle &lOther)
-    {
-        return lHandle.muiHandle != lOther.muiHandle;
-    }
+    TkStrongOrdering operator<=>(const cTkFileHandle &) const = default;
+    bool operator==(const cTkFileHandle &lOther) const { return this->muiHandle == lOther.muiHandle; }
 
-    friend bool operator==(const cTkFileHandle &lHandle, const cTkFileHandle &lOther)
-    {
-        return lHandle.muiHandle == lOther.muiHandle;
-    }
-
-    auto operator<=>(const cTkFileHandle &) const = default;
-
-    uint64_t CalculateHash() const { return cTkHash::FNV1A(&muiHandle, sizeof(muiHandle)); }
-
+  private:
     union {
-        uint64_t muiHandle;
+        u64 muiHandle;
         struct
         {
             bool mbBinary : 1;
             bool mbPak : 1;
             bool mbCompressed : 1;
-            uint32_t _muiReserved : 29;
+            u32 _muiReserved : 29;
             eTkFileMode meFileMode : 4;
-            uint32_t muiIndex : 32;
+            u32 muiIndex : 32;
         };
     };
 };
+
+TK_STL_HASH(cTkFileHandle, (const cTkFileHandle &val) const noexcept { return val.Hash(); });

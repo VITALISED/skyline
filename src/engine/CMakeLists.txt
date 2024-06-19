@@ -14,4 +14,13 @@ target_precompile_headers(EgEngine PUBLIC EgPch.h)
 
 target_include_directories(EgEngine PRIVATE ${SKYLINE_SRC_DIR})
 
+if(MSVC)
+    target_compile_definitions(EgEngine PUBLIC D_MSVC=1)
+    target_compile_options(
+        EgEngine PUBLIC /wd4068 /Zc:__cplusplus /std:c++latest
+    )
+else(MINGW)
+    target_compile_definitions(EgEngine PUBLIC D_MINGW=1)
+endif()
+
 target_link_libraries(EgEngine PUBLIC TkToolkit)

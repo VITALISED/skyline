@@ -3,16 +3,16 @@
 #define VMA_IMPLEMENTATION
 #include <toolkit/graphics/vulkan/vk_mem_alloc.h>
 
-void cEgRenderer::Construct(cTkEngineSettings &lSettings)
+void cEgRenderer::Construct()
 {
     cTkSystem &gSystem = cTkSystem::GetInstance();
 
     vkb::InstanceBuilder lInstanceBuilder;
 
-    auto lBuilderRet = lInstanceBuilder.set_app_name(lSettings.msApplicationName.c_str())
-                           .set_app_version(lSettings.muiApplicationVersion)
-                           .set_engine_name(lSettings.msEngineName.c_str())
-                           .set_engine_version(lSettings.muiEngineVersion)
+    auto lBuilderRet = lInstanceBuilder.set_app_name("GcGame")
+                           .set_app_version(VK_MAKE_API_VERSION(1, 1, 0, 0))
+                           .set_engine_name("Skyline")
+                           .set_engine_version(VK_MAKE_API_VERSION(1, 1, 0, 0))
 #ifdef D_DEBUG
                            .request_validation_layers()
                            .use_default_debug_messenger()

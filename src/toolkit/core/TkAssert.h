@@ -2,7 +2,9 @@
 
 #include <spdlog/spdlog.h>
 #include <toolkit/core/TkMacros.h>
-#include <toolkit/core/TkString.h>
+#include <toolkit/core/string/TkString.h>
+
+#define TK_STATIC_ASSERT(condition, message) static_assert(condition, message)
 
 // this is gross
 #define TK_LOG_BASE(message)                                                                                           \
@@ -35,6 +37,7 @@ class cTkAssert
     static void Setup() { spdlog::set_pattern("[%T] [%^%l%$] %v"); }
 
     static cTkString Parse(const char *lpacFirst) { return cTkString(lpacFirst); }
+    static cTkString Parse() { return cTkString(); }
 
     template <typename... Args>
     static cTkString Parse(const char *lpacFirst, Args... lArgs)
